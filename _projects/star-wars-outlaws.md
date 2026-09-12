@@ -14,7 +14,7 @@ trailer_video: "/assets/videos/SWO.mp4"
 ---
 
 ## Overview
-My time on this project was very broad as I was lucky enough to be in the team right from the start. A couple of mentionable acomplishments:
+My time on this project was very broad as I was lucky enough to be in the team right from the start. A couple of mentionable accomplishments:
 
 • Houdini VAT destroyable environment  
 • Houdini Fracturing for VFX setup  

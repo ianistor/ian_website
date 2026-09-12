@@ -19,8 +19,8 @@ links:
 
 ## Description
 
-It's easy to loose track of where you were previous in your work, and i dont want a lot of sticky notes in my setup.
-So i created a to-do tool that lets me add "task" and notes to each individual task.
+It's easy to lose track of where you were previously in your work, and I don't want a lot of sticky notes in my setup.
+So I created a to-do tool that lets me add "tasks" and notes to each individual task.
 
 
 ## Features
