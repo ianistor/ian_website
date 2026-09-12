@@ -19,7 +19,7 @@ permalink: /cv/
       </li>
       <li>
         <span class="contact-icon cv-contact-icon" aria-hidden="true">in</span>
-        <a href="https://www.linkedin.com/in/ioan-andreinistor" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://www.linkedin.com/in/ioan-andrei-nistor" target="_blank" rel="noopener noreferrer">LinkedIn</a>
       </li>
       <li>
         <span class="contact-icon contact-icon-artstation cv-contact-icon" aria-hidden="true">
@@ -292,7 +292,7 @@ Senior Technical Artist with 14+ years of AAA experience, specializing in Unreal
   </li>
   <li>
     <span class="contact-icon cv-contact-icon" aria-hidden="true">in</span>
-    <a href="https://www.linkedin.com/in/ioan-andreinistor" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a href="https://www.linkedin.com/in/ioan-andrei-nistor" target="_blank" rel="noopener noreferrer">LinkedIn</a>
   </li>
   <li>
     <span class="contact-icon contact-icon-artstation cv-contact-icon" aria-hidden="true">
