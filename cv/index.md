@@ -79,7 +79,7 @@ Senior Technical Artist with 14+ years of AAA experience, specializing in Unreal
 <div class="experience-head">
   <img src="{{ '/assets/images/companieslogos/ags_white_logo.png' | relative_url }}" alt="Amazon Games logo" class="company-logo-inline company-logo-amazon">
   <div class="experience-head-copy">
-    <h3>Technical Artist</h3>
+    <h3>Senior Technical Artist</h3>
     <p><strong>Amazon Games</strong></p>
     <p><em>2024 - Current</em></p>
     <div class="experience-project-covers">
