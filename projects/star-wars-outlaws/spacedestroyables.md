@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Space Dynamics & Destroyables"
-permalink: /projects/star-wars-outlaws/technical-art-and-pipelines/
+permalink: /projects/star-wars-outlaws/dynamics-and-breakables-space/
 parent_project: "Star Wars Outlaws"
 parent_slug: "star-wars-outlaws"
 parent_permalink: /projects/star-wars-outlaws/
