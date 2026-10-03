@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Baking Linear Deformation into Vertex Colors — Houdini to Unreal WPO"
+title: "Baking Linear Deformation into Vertex Colors from Houdini to Unreal WPO"
 date: 2026-10-03
 tags: [houdini, unreal, workflow]
 image: "/assets/images/blog/linear-deformation-wpo/material-graph.webp"
