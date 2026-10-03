@@ -88,21 +88,13 @@ LocalOffset = (VertexColor.rbg - 0.5) * (maxDistance * 2)
 
 ![Unreal material graph decoding vertex-color deformation]({{ '/assets/images/blog/linear-deformation-wpo/material-graph.webp' | relative_url }})
 
-### Why swizzle the vertex color?
+### Material Function setup
 
 Houdini uses **Y-up**, while Unreal uses **Z-up**. In this setup, the baked Houdini XYZ displacement needs to become Unreal XZY:
-
-| Baked channel | Houdini axis | Unreal axis |
-| --- | --- | --- |
-| R | X | X |
-| B | Z | Y |
-| G | Y | Z |
 
 That's why **Make Vector3** receives **R, B, G**. A vertical movement stored in Houdini's green channel must drive Unreal's Z axis.
 
 The mesh import handles the geometry's coordinate conversion, but RGB travels as color data—the importer doesn't know it contains a displacement vector. We perform that conversion ourselves. This swizzle matches the setup shown; it must agree with your export/import axis settings. If you already converted the offsets before baking them, don't swap them again.
-
-### Apply the offset
 
 Transform the decoded vector from **Local Space → World Space**, multiply it by `BlendTime`, and connect it to **World Position Offset**.
 
