@@ -150,8 +150,6 @@ Compressing props, predefined damage states, simple bending and gameplay-driven 
 
 Concrete example : Melting candles/props, Engine Thrusters expanding or shrinking (see [Ship Thrusters when accelerating](https://ianistor.com/projects/star-wars-outlaws/environment-art-and-set-dressing/)) or Deflation of air filled props (tires, ballons, etc) 
 
-An optional extension is a **Vertex Alpha mask**: multiply the decoded offset by Alpha before applying the blend. For example, you could vary a panel's deformation strength across its surface. If the mounting points already have zero baked offset, they already stay fixed without an extra mask.
-
 For simple linear deformation, it's a compact workflow that is easy to generate in Houdini and easy to control in Unreal.
 
 /Andrei
