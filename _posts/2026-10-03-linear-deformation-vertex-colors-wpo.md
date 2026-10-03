@@ -80,6 +80,8 @@ The `× 100` converts metres to Unreal's centimetres. It assumes the mesh is exp
 
 Export the **rest mesh** with its baked colors. In Unreal, import those vertex colors rather than ignoring or overriding them.
 
+![Houdini viewport showing baked vertex colors on the wall and rubber toy meshes]({{ '/assets/images/blog/linear-deformation-wpo/houdini-baked-vertex-colors.png' | relative_url }})
+
 ## Unreal
 
 On the Unreal side, first **swizzle RGB to RBG**, as shown by the **Make Vector3** node in the graph, then reverse the encoding:
