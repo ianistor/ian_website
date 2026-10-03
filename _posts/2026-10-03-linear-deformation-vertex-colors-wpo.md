@@ -33,10 +33,10 @@ Offset = DeformedPosition - RestPosition
 Since the offset can contain negative values, encode it into the **0–1 range** used by vertex colors:
 
 ```text
-EncodedOffset = (Offset / MaxDistance) * 0.5 + 0.5
+EncodedOffset = (Offset / maxDistance) * 0.5 + 0.5
 ```
 
-Use a positive `MaxDistance` large enough to cover every XYZ offset component. `0.5` represents no movement, values below it represent negative movement, and values above it represent positive movement.
+Use a positive `maxDistance` large enough to cover every XYZ offset component. `0.5` represents no movement, values below it represent negative movement, and values above it represent positive movement.
 
 Store the result in **Cd / Vertex Color RGB**, then export the **rest mesh** with those colors. In Unreal, import the mesh's vertex colors rather than ignoring or overriding them.
 
@@ -47,15 +47,15 @@ Keep the same encoding range when decoding. The offsets also need to match Unrea
 On the Unreal side, reverse the process:
 
 ```text
-LocalOffset = (VertexColor.rgb - 0.5) * (MaxDistance * 2)
+LocalOffset = (VertexColor.rgb - 0.5) * (maxDistance * 2)
 ```
 
-Transform the decoded vector from **Local Space → World Space**, multiply it by `DeformationAlpha`, and connect it to **World Position Offset**.
+![Unreal material graph decoding vertex-color deformation]({{ '/assets/images/blog/linear-deformation-wpo/material-graph.webp' | relative_url }})
 
-`DeformationAlpha = 0` → original mesh  
-`DeformationAlpha = 1` → fully deformed mesh
+Transform the decoded vector from **Local Space → World Space**, multiply it by `BlendTime`, and connect it to **World Position Offset**.
 
-The screenshot calls this parameter `BlendTime`; here I'm calling it `DeformationAlpha` because it controls the blend, not time itself.
+`BlendTime = 0` → original mesh  
+`BlendTime = 1` → fully deformed mesh
 
 Drive it from a Material Instance, Blueprint, Sequencer or Niagara. And that's pretty much it.
 
