@@ -80,7 +80,9 @@ The `× 100` converts metres to Unreal's centimetres. It assumes the mesh is exp
 
 Export the **rest mesh** with its baked colors. In Unreal, import those vertex colors rather than ignoring or overriding them.
 
-![Houdini viewport showing baked vertex colors on the wall and rubber toy meshes]({{ '/assets/images/blog/linear-deformation-wpo/houdini-baked-vertex-colors.png' | relative_url }})
+![Houdini viewport showing baked vertex colors and maximum displacement values for the wall and rubber toy meshes]({{ '/assets/images/blog/linear-deformation-wpo/houdini-baked-vertex-colors.png' | relative_url }})
+
+*The displayed values—26.198410 for the wall and 41.539078 for the toy—are each mesh's maximum displacement in centimetres (`max_diff_val_unreal` in the wrangle above). Enter the corresponding value into the `maxDistance` parameter of that mesh's Material Instance.*
 
 ## Unreal
 
