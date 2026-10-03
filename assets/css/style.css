@@ -1186,8 +1186,12 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
   border: 1px solid var(--code-border);
 }
 
-.code-block pre {
-  padding-top: 3rem;
+.prose .code-block pre {
+  padding: 1rem 6rem 1rem 1rem;
+}
+
+.prose .code-block:has(.code-language-badge) pre {
+  padding-right: 11rem;
 }
 
 .prose .heading-anchor {
@@ -1251,7 +1255,7 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
 .code-language-badge {
   position: absolute;
   top: 0.75rem;
-  left: 0.75rem;
+  right: 6rem;
   border: 1px solid var(--line);
   background: var(--surface-glass);
   color: var(--muted);
