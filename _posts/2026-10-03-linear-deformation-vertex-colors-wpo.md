@@ -7,8 +7,10 @@ image: "/assets/images/blog/linear-deformation-wpo/material-graph.webp"
 excerpt: "Bake an A → B deformation into Vertex Color RGB in Houdini and reconstruct it with World Position Offset in Unreal."
 ---
 
-<!-- Replace this opening image with the final Unreal result GIF/video when available. -->
-![Unreal material graph decoding vertex-color deformation]({{ '/assets/images/blog/linear-deformation-wpo/material-graph.webp' | relative_url }})
+<video controls playsinline preload="metadata" aria-label="Wall deformation using baked vertex colors and Unreal World Position Offset" style="display: block; width: 100%; height: auto;">
+  <source src="{{ '/assets/videos/blog/linear-deformation-wpo/BlendshapeWallDeform2.mp4' | relative_url }}" type="video/mp4">
+  Your browser does not support embedded video. <a href="{{ '/assets/videos/blog/linear-deformation-wpo/BlendshapeWallDeform2.mp4' | relative_url }}">Watch the wall deformation video</a>.
+</video>
 
 ## Quick Intro
 
