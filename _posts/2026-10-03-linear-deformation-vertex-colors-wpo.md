@@ -117,6 +117,18 @@ The mesh carries its own deformation data. There are no animation textures or sk
 
 That doesn't automatically make it faster than VAT or other approaches. WPO cost depends on mesh density, material complexity and rendering path, particularly for **Nanite versus non-Nanite workflows**. Profile it in the context where it will actually be used.
 
+<style>
+#pros--cons + table th + th,
+#pros--cons + table td + td {
+  border-left: 1px solid #6b7280;
+  padding-left: 1rem;
+}
+#pros--cons + table th:first-child,
+#pros--cons + table td:first-child {
+  padding-right: 1rem;
+}
+</style>
+
 ## Pros & Cons
 
 | Pros | Cons |
