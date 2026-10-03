@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Wall Destruction"
-permalink: /projects/star-wars-outlaws/tools-and-workflow-support/
+permalink: /projects/star-wars-outlaws/destroyable-wall-houdini-vat/
 parent_project: "Star Wars Outlaws"
 parent_slug: star-wars-outlaws
 parent_permalink: /projects/star-wars-outlaws/
