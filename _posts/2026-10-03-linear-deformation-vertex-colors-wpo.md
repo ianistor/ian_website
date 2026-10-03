@@ -140,7 +140,7 @@ This works best when the deformation can be described as **“move these vertice
 
 Compressing props, predefined damage states, simple bending and gameplay-driven shape changes are good candidates—as long as the straight-line transition looks right.
 
-Concrete example : Melting candles/props, Engine Thrusters expanding or shrinking (see [Ship Thrusters when accelerating](https://ianistor.com/projects/star-wars-outlaws/environment-art-and-set-dressing/)) or Deflation of air filled props (tires, ballons, etc) 
+Concrete example : Melting candles/props, Engine Thrusters expanding or shrinking (see [Ship Thrusters when accelerating](https://ianistor.com/projects/star-wars-outlaws/procedural-animation-trailblazer/)) or Deflation of air filled props (tires, ballons, etc) 
 
 For simple linear deformation, it's a compact workflow that is easy to generate in Houdini and easy to control in Unreal.
 
