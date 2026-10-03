@@ -119,24 +119,16 @@ That doesn't automatically make it faster than VAT or other approaches. WPO cost
 
 ## Pros & Cons
 
-**Pros**
-
-- Simple, procedural Houdini → Unreal pipeline
-- Deformation data stays with the mesh
-- No additional animation textures
-- One blend parameter to expose to gameplay
-- Good fit for A → B deformation
-
-**Cons**
-
-- Vertices follow straight paths between states; this doesn't preserve a curved or rotation-driven motion
-- Shape quality depends on vertex density, and precision depends on the vertex-color storage and encoding range
-- Normals do not update
-- Uses RGB channels that may already be needed for other data
-- WPO cost needs profiling for Nanite and non-Nanite assets
-- Large offsets need appropriate bounds; Nanite also needs attention to its WPO displacement limits
-- WPO doesn't update collision to match the deformed surface
-- Not a replacement for VAT when you need a multi-frame deformation
+| Pros | Cons |
+| --- | --- |
+| Simple, procedural Houdini → Unreal pipeline | Vertices follow straight paths between states; this doesn't preserve a curved or rotation-driven motion |
+| Deformation data stays with the mesh | Shape quality depends on vertex density, and precision depends on the vertex-color storage and encoding range |
+| No additional animation textures | Normals do not update |
+| One blend parameter to expose to gameplay | Uses RGB channels that may already be needed for other data |
+| Good fit for A → B deformation | WPO cost needs profiling for Nanite and non-Nanite assets |
+| — | Large offsets need appropriate bounds; Nanite also needs attention to its WPO displacement limits |
+| — | WPO doesn't update collision to match the deformed surface |
+| — | Not a replacement for VAT when you need a multi-frame deformation |
 
 ## Use Cases
 
