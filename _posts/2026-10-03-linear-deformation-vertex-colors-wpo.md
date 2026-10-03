@@ -111,6 +111,11 @@ Drive it from a Material Instance, Blueprint, Sequencer or Niagara. And that's p
 
 ## Results
 
+<video controls playsinline preload="metadata" aria-label="Wall deformation using baked vertex colors and Unreal World Position Offset" style="display: block; width: 100%; height: auto;">
+  <source src="{{ '/assets/videos/blog/linear-deformation-wpo/BlendshapeWallDeform2.mp4' | relative_url }}" type="video/mp4">
+  Your browser does not support embedded video. <a href="{{ '/assets/videos/blog/linear-deformation-wpo/BlendshapeWallDeform2.mp4' | relative_url }}">Watch the wall deformation video</a>.
+</video>
+
 The mesh carries its own deformation data. There are no animation textures or skeletal animation assets, just the baked offsets and the material that reconstructs them.
 
 That doesn't automatically make it faster than VAT or other approaches. WPO cost depends on mesh density, material complexity and rendering path, particularly for **Nanite versus non-Nanite workflows**. Profile it in the context where it will actually be used.
