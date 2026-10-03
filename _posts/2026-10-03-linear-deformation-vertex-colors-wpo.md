@@ -24,33 +24,85 @@ The Houdini side stays procedural, and the Unreal setup is controlled with a sin
 
 Start with the original mesh and its deformed state. Both need matching topology and point order, so each point refers to the same part of the mesh.
 
-For each point, calculate the difference:
+![Houdini network with og_mesh, deformed_mesh, find_max_val and set_cd wrangles]({{ '/assets/images/blog/linear-deformation-wpo/houdini-network.webp' | relative_url }})
 
-```text
-Offset = DeformedPosition - RestPosition
+### find_max_val — Run Over: Detail (only once)
+
+Connect **og_mesh to input 0** and **deformed_mesh to input 1**. This wrangle finds the largest absolute displacement component across X, Y and Z and stores it as `max_diff_val`.
+
+```c
+// OG mesh in input 0, deformed in 1
+float max_val = 0.0;
+
+int npts = npoints(0);
+for (int i = 0; i < npts; i++) {
+    vector posA = point(0, "P", i);
+    vector posB = point(1, "P", i);
+    vector diff = posA - posB;
+
+    max_val = max(max_val, abs(diff.x));
+    max_val = max(max_val, abs(diff.y));
+    max_val = max(max_val, abs(diff.z));
+}
+
+setdetailattrib(0, "max_diff_val", max_val, "set");
 ```
 
-Since the offset can contain negative values, encode it into the **0–1 range** used by vertex colors:
+The sign doesn't matter for this step because we're measuring absolute values. One shared maximum gives every point the same encoding range.
 
-```text
-EncodedOffset = (Offset / maxDistance) * 0.5 + 0.5
+### set_cd — Run Over: Points
+
+Connect **find_max_val to input 0** and **deformed_mesh to input 1**. Here the direction matters: use **deformed − original** so a positive `BlendTime` moves the exported rest mesh towards its deformed state.
+
+```c
+vector diff = point(1, "P", @ptnum) - @P;
+float max_val = detail(0, "max_diff_val", 0);
+
+// Encode signed displacement into the 0-1 color range.
+// Identical meshes have no displacement, so avoid dividing by zero.
+@Cd = set(0.5, 0.5, 0.5);
+if (max_val > 0.0) {
+    diff /= (max_val * 2.0);
+    @Cd = diff + 0.5;
+}
+
+// Store the Unreal value separately; Houdini units here are metres.
+if (@ptnum == 0) {
+    setdetailattrib(0, "max_diff_val_unreal", max_val * 100.0, "set");
+}
 ```
 
-Use a positive `maxDistance` large enough to cover every XYZ offset component. `0.5` represents no movement, values below it represent negative movement, and values above it represent positive movement.
+RGB now stores the XYZ offset: `0.5` represents no movement, values below it represent negative movement, and values above it represent positive movement.
 
-Store the result in **Cd / Vertex Color RGB**, then export the **rest mesh** with those colors. In Unreal, import the mesh's vertex colors rather than ignoring or overriding them.
+The `× 100` converts metres to Unreal's centimetres. It assumes the mesh is exported with the same metre-to-centimetre conversion; adjust this factor if your pipeline uses different units. Copy **max_diff_val_unreal** from the Geometry Spreadsheet's Detail view into the material's **maxDistance** parameter. This custom detail attribute isn't automatically connected to the material.
 
-Keep the same encoding range when decoding. The offsets also need to match Unreal's local axes and units: FBX conversion of mesh positions doesn't automatically convert a vector stored as RGB.
+Export the **rest mesh** with its baked colors. In Unreal, import those vertex colors rather than ignoring or overriding them.
 
 ## Unreal
 
-On the Unreal side, reverse the process:
+On the Unreal side, first **swizzle RGB to RBG**, as shown by the **Make Vector3** node in the graph, then reverse the encoding:
 
 ```text
-LocalOffset = (VertexColor.rgb - 0.5) * (maxDistance * 2)
+LocalOffset = (VertexColor.rbg - 0.5) * (maxDistance * 2)
 ```
 
 ![Unreal material graph decoding vertex-color deformation]({{ '/assets/images/blog/linear-deformation-wpo/material-graph.webp' | relative_url }})
+
+### Why swizzle the vertex color?
+
+Houdini uses **Y-up**, while Unreal uses **Z-up**. In this setup, the baked Houdini XYZ displacement needs to become Unreal XZY:
+
+| Baked channel | Houdini axis | Unreal axis |
+| --- | --- | --- |
+| R | X | X |
+| B | Z | Y |
+| G | Y | Z |
+
+That's why **Make Vector3** receives **R, B, G**. A vertical movement stored in Houdini's green channel must drive Unreal's Z axis.
+
+The mesh import handles the geometry's coordinate conversion, but RGB travels as color data—the importer doesn't know it contains a displacement vector. We perform that conversion ourselves. This swizzle matches the setup shown; it must agree with your export/import axis settings. If you already converted the offsets before baking them, don't swap them again.
+
+### Apply the offset
 
 Transform the decoded vector from **Local Space → World Space**, multiply it by `BlendTime`, and connect it to **World Position Offset**.
 
