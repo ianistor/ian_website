@@ -79,6 +79,7 @@ That doesn't automatically make it faster than VAT or other approaches. WPO cost
 
 - Vertices follow straight paths between states; this doesn't preserve a curved or rotation-driven motion
 - Shape quality depends on vertex density, and precision depends on the vertex-color storage and encoding range
+- Normals do not update
 - Uses RGB channels that may already be needed for other data
 - WPO cost needs profiling for Nanite and non-Nanite assets
 - Large offsets need appropriate bounds; Nanite also needs attention to its WPO displacement limits
@@ -90,6 +91,8 @@ That doesn't automatically make it faster than VAT or other approaches. WPO cost
 This works best when the deformation can be described as **“move these vertices from here to there.”**
 
 Compressing props, predefined damage states, simple bending and gameplay-driven shape changes are good candidates—as long as the straight-line transition looks right.
+
+Concrete example : Melting candles/props, Engine Thrusters expanding or shrinking (see [Ship Thrusters when accelerating](https://ianistor.com/projects/star-wars-outlaws/environment-art-and-set-dressing/)) or Deflation of air filled props (tires, ballons, etc) 
 
 An optional extension is a **Vertex Alpha mask**: multiply the decoded offset by Alpha before applying the blend. For example, you could vary a panel's deformation strength across its surface. If the mounting points already have zero baked offset, they already stay fixed without an extra mask.
 
