@@ -211,10 +211,8 @@ For simple linear deformation, it's a compact workflow that is easy to generate 
 
 ## Download
 
-<a class="wpo-download" href="{{ '/assets/downloads/linear-deformation-wpo/sop_ian_cd_blendshape.1.0.hda' | relative_url }}" download="sop_ian_cd_blendshape.1.0.hda">
-  <span class="wpo-download-icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
-  <span class="wpo-download-info"><span class="wpo-download-name">sop_ian_cd_blendshape.1.0.hda</span><span class="wpo-download-meta">Houdini Digital Asset · 66 KB</span></span>
-  <svg class="wpo-download-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/></svg>
-</a>
+<div markdown="0">
+<a class="wpo-download" href="{{ '/assets/downloads/linear-deformation-wpo/sop_ian_cd_blendshape.1.0.hda' | relative_url }}" download="sop_ian_cd_blendshape.1.0.hda"><span class="wpo-download-icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span><span class="wpo-download-info"><span class="wpo-download-name">sop_ian_cd_blendshape.1.0.hda</span><span class="wpo-download-meta">Houdini Digital Asset · 66 KB</span></span><svg class="wpo-download-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/></svg></a>
+</div>
 
 /Andrei
