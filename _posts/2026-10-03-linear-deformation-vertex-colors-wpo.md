@@ -130,6 +130,60 @@ That doesn't automatically make it faster than VAT or other approaches. WPO cost
 #pros--cons + table td:first-child {
   padding-right: 1rem;
 }
+
+.prose a.wpo-download {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 560px;
+  padding: 1.1rem 1.25rem;
+  margin: 1rem 0 1.75rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.prose a.wpo-download:hover {
+  border-color: var(--accent);
+  background: var(--panel-2);
+  color: var(--text);
+}
+.prose a.wpo-download:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.wpo-download-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--accent);
+}
+.wpo-download-info { flex: 1; min-width: 0; }
+.wpo-download-name {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.wpo-download-meta {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.wpo-download-arrow { flex-shrink: 0; color: var(--accent); }
+@media (max-width: 480px) {
+  .prose a.wpo-download { gap: 0.75rem; padding: 1rem; }
+}
 </style>
 
 ## Pros & Cons
@@ -157,6 +211,10 @@ For simple linear deformation, it's a compact workflow that is easy to generate 
 
 ## Download
 
-<a href="{{ '/assets/downloads/linear-deformation-wpo/sop_ian_cd_blendshape.1.0.hda' | relative_url }}" download="sop_ian_cd_blendshape.1.0.hda">Download the Houdini HDA (.hda, 66 KB)</a>
+<a class="wpo-download" href="{{ '/assets/downloads/linear-deformation-wpo/sop_ian_cd_blendshape.1.0.hda' | relative_url }}" download="sop_ian_cd_blendshape.1.0.hda">
+  <span class="wpo-download-icon" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>
+  <span class="wpo-download-info"><span class="wpo-download-name">sop_ian_cd_blendshape.1.0.hda</span><span class="wpo-download-meta">Houdini Digital Asset · 66 KB</span></span>
+  <svg class="wpo-download-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/></svg>
+</a>
 
 /Andrei
