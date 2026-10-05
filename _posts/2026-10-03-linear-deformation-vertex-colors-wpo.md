@@ -155,4 +155,8 @@ Concrete example : Melting candles/props, Engine Thrusters expanding or shrinkin
 
 For simple linear deformation, it's a compact workflow that is easy to generate in Houdini and easy to control in Unreal.
 
+## Download
+
+<a href="{{ '/assets/downloads/linear-deformation-wpo/sop_ian_cd_blendshape.1.0.hda' | relative_url }}" download="sop_ian_cd_blendshape.1.0.hda">Download the Houdini HDA (.hda, 66 KB)</a>
+
 /Andrei
