@@ -184,7 +184,7 @@ title: Home
         </a>
       </li>
       <li>
-        <a href="https://www.linkedin.com/in/ioan-andrei-nistor/" target="_blank" rel="noopener noreferrer" class="contact-icon-link" aria-label="LinkedIn">
+        <a href="https://www.linkedin.com/in/ianistor" target="_blank" rel="noopener noreferrer" class="contact-icon-link" aria-label="LinkedIn">
           <span class="contact-icon" aria-hidden="true">in</span>
         </a>
       </li>
