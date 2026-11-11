@@ -1032,8 +1032,10 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
 }
 
 .prose .rotation-method-table tr > :first-child {
-  min-width: 8.5em;
+  min-width: 10em;
   padding-inline-end: 0.75em;
+  overflow-wrap: normal;
+  word-break: normal;
   white-space: nowrap;
 }
 

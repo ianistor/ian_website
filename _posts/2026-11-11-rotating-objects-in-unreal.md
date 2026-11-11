@@ -30,7 +30,7 @@ This example applies a fixed angle per frame. Multiply your rotation rate in deg
 
 | Category | In practice |
 | --- | --- |
-| **Visual Updates** | ✅ Update the actor or component angle every frame. A security camera can track a target and stop at its rotation limits. |
+| **Visual&nbsp;Updates** | ✅ Update the actor or component angle every frame. A security camera can track a target and stop at its rotation limits. |
 | **Collisions** | ✅ Enabled collision follows the transform. ⚠️ A rotating hazard can miss a contact between frames, so test the blade's path separately if every hit matters. |
 | **Pros** | ✅ You control the angle directly, which helps when a turret has to stop exactly at its aim angle. |
 | **Cons** | ⚠️ Each active actor runs Blueprint logic and updates a transform every frame. A fixed angle per tick also makes speed depend on frame rate. |
@@ -43,7 +43,7 @@ This is the current recomended way of rotating an object inside UE
 
 | Category | In practice |
 | --- | --- |
-| **Visual Updates** | ✅ Spins the component you assign. Drive Rotation Rate with a Timeline to ramp up a ventilation fan while its housing stays still. |
+| **Visual&nbsp;Updates** | ✅ Spins the component you assign. Drive Rotation Rate with a Timeline to ramp up a ventilation fan while its housing stays still. |
 | **Collisions** | ✅ Enabled collision rotates with the updated component. ⚠️ Rotation applies without a sweep, so a spinning trap needs separate hit logic if contacts between frames matter. |
 | **Pros** | ✅ The built-in component handles continuous spin. A Blueprint switch can change its rate when the player turns a machine on. |
 | **Cons** | ⚠️ Each active component still ticks and updates a transform. For a factory full of decorative fans, measure that cost at the instance count you expect to ship. |
@@ -57,7 +57,7 @@ WPO was used for a lot of cheap tricks in the past, and its something i personal
 
 | Category | In practice |
 | --- | --- |
-| **Visual Updates** | ✅ The material spins the rendered blades around the hub. ⚠️ Rotate the shading normals as well if the highlights look wrong. |
+| **Visual&nbsp;Updates** | ✅ The material spins the rendered blades around the hub. ⚠️ Rotate the shading normals as well if the highlights look wrong. |
 | **Collisions** | ⚠️ Collision stays at the original pose. That works for an inaccessible rooftop fan, but a player-facing blade hazard needs separate collision or hit logic. |
 | **Pros** | ✅ Background fans can spin without per-fan Blueprint Tick or transform updates. |
 | **Cons** | ⚠️ Visible meshes add vertex shader work. Profile the GPU cost at your expected fan count, especially with Nanite, and check that the blade tips stay within the displacement bounds. |
