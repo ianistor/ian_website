@@ -60,7 +60,7 @@ WPO was used for a lot of cheap tricks in the past, and its something i personal
 | **Visual&nbsp;Updates** | ✅ The material spins the rendered blades around the hub. ⚠️ Rotate the shading normals as well if the highlights look wrong. |
 | **Collisions** | ⚠️ Collision stays at the original pose. That works for an inaccessible rooftop fan, but a player-facing blade hazard needs separate collision or hit logic. |
 | **Pros** | ✅ Background fans can spin without per-fan Blueprint Tick or transform updates. |
-| **Cons** | ⚠️ Visible meshes add vertex shader work. Profile the GPU cost at your expected fan count, especially with Nanite, and check that the blade tips stay within the displacement bounds. |
+| **Cons** | ⚠️ WPO adds GPU work. **Avoid WPO on Nanite meshes when possible.** If you need it, profile the GPU cost at your expected fan count and make sure the blade tips stay within the displacement bounds. |
 {: .rotation-method-table}
 
 ## Conclusions
