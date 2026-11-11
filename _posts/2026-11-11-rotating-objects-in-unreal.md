@@ -80,9 +80,12 @@ This time the material moves the vertices. In the graph below, I transform the f
 | A ventilation fan that ramps up when the player flips a switch | **Rotating Movement Component** handles the spin while a Timeline changes its rate. |
 | A spinning trap that must register hits as the blade passes through a player |**Blueprint Tick or Component**  |
 | Rooftop fans that players only see from a distance | **WPO** is an option for visual-only spin. For Nanite meshes I'd start with transform rotation and measure at the fan count I expect to ship. |
+
+**Funny enough testing performances in traces shows WPO is still the clear winner performance wise, even if Nanite is on. (will share more data analysis soon)**
+
 {: .rotation-table}
 
-Funny enough testing performances in traces shows WPO is still the clear winner performance wise, even if Nanite is on. (will share more data analysis soon)
+
 
 
 
