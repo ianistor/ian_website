@@ -10,7 +10,9 @@ excerpt: "One fan, three ways to spin it, and what each means for collision and 
 
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
 
-## Quick intro
+*Ignore the transform typo please*
+
+## Context
 
 Rotating an object in a game seems trivial, right? Weeeeeeell… it is, right up until you ask whether the blades should hit anything, whether the player can change the speed, or what happens when you put a hundred of them in a level.
 
