@@ -1249,7 +1249,7 @@
       };
 
       if (prose) {
-        prose.querySelectorAll('img, video').forEach((media) => initializeMediaLoadingState(media));
+        prose.querySelectorAll('img, video:not(.video-compare-view)').forEach((media) => initializeMediaLoadingState(media));
       }
 
       const initializeLightboxImages = (root) => {

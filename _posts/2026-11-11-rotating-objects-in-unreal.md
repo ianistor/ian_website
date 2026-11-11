@@ -72,10 +72,7 @@ WPO was used for a lot of cheap tricks in the past, and its something i personal
 | **Performance** | Runs Blueprint logic and updates a transform each frame. | The native component still ticks and updates a transform each frame. | The shader moves the vertices. GPU cost depends on mesh complexity and how many instances are visible. Profile with Nanite enabled if the mesh uses it. |
 | **When to use** | You need to calculate the angle yourself, like tracking a target or stopping at a specific angle. | You want continuous spin with a configurable rate, like a fan that ramps up or winds down. | You want purely visual movement, like background fans with stationary collision or no collision. |
 
-<video controls playsinline preload="metadata" aria-label="Fan collision demo in Unreal Engine" style="display: block; width: 100%; height: auto;">
-  <source src="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4' | relative_url }}" type="video/mp4">
-  <a href="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4' | relative_url }}">Watch the fan collision demo</a>.
-</video>
+{% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" %}
 
 
 /Andrei

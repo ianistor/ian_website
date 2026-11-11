@@ -1,0 +1,25 @@
+<div class="video-compare" data-video-compare>
+  <div class="video-compare-labels">
+    <span>Collision</span>
+    <span>Visual update</span>
+  </div>
+  <figure class="image-compare" data-image-compare>
+    <video class="video-compare-view" data-video-compare-primary muted loop playsinline preload="auto" aria-label="Visual update">
+      <source src="{{ include.visual | relative_url }}" type="video/mp4">
+    </video>
+    <div class="image-compare-overlay">
+      <video class="video-compare-view" data-video-compare-secondary muted playsinline preload="auto" aria-label="Collision">
+        <source src="{{ include.collision | relative_url }}" type="video/mp4">
+      </video>
+    </div>
+    <input class="image-compare-slider" data-image-compare-slider type="range" min="0" max="100" value="50"
+      aria-label="Reveal collision view from the left">
+  </figure>
+  <button class="button secondary" type="button" data-video-compare-toggle>Play comparison</button>
+  <p data-video-compare-error role="status" hidden>
+    The comparison could not play.
+    <a href="{{ include.visual | relative_url }}">Open the visual clip</a> or
+    <a href="{{ include.collision | relative_url }}">open the collision clip</a>.
+  </p>
+</div>
+<script src="{{ '/assets/js/video-compare.js' | relative_url }}" defer></script>
