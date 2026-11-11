@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Spin methods and when to use them"
+title: "Three Ways to Spin a Fan in Unreal Engine"
 date: 2026-11-11
 tags: [unreal, workflow]
 image: "/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png"
@@ -34,6 +34,7 @@ This example applies a fixed angle per frame. Multiply your rotation rate in deg
 | **Collisions** | ✅ Enabled collision follows the transform. ⚠️ A rotating hazard can miss a contact between frames, so test the blade's path separately if every hit matters. |
 | **Pros** | ✅ You control the angle directly, which helps when a turret has to stop exactly at its aim angle. |
 | **Cons** | ⚠️ Each active actor runs Blueprint logic and updates a transform every frame. A fixed angle per tick also makes speed depend on frame rate. |
+{: .rotation-method-table}
 
 #### Blueprint - Using C++ Rotator component 
 This is the current recomended way of rotating an object inside UE
@@ -46,6 +47,7 @@ This is the current recomended way of rotating an object inside UE
 | **Collisions** | ✅ Enabled collision rotates with the updated component. ⚠️ Rotation applies without a sweep, so a spinning trap needs separate hit logic if contacts between frames matter. |
 | **Pros** | ✅ The built-in component handles continuous spin. A Blueprint switch can change its rate when the player turns a machine on. |
 | **Cons** | ⚠️ Each active component still ticks and updates a transform. For a factory full of decorative fans, measure that cost at the instance count you expect to ship. |
+{: .rotation-method-table}
 
 ### Material - WPO Rotate
 WPO was used for a lot of cheap tricks in the past, and its something i personally miss a lot in my day to day work, however with the new pipelines using Nanite WPO is becoming something more expensive than before.
@@ -59,6 +61,7 @@ WPO was used for a lot of cheap tricks in the past, and its something i personal
 | **Collisions** | ⚠️ Collision stays at the original pose. That works for an inaccessible rooftop fan, but a player-facing blade hazard needs separate collision or hit logic. |
 | **Pros** | ✅ Background fans can spin without per-fan Blueprint Tick or transform updates. |
 | **Cons** | ⚠️ Visible meshes add vertex shader work. Profile the GPU cost at your expected fan count, especially with Nanite, and check that the blade tips stay within the displacement bounds. |
+{: .rotation-method-table}
 
 ## Conclusions
 

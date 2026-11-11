@@ -1027,6 +1027,16 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
   color: var(--text);
 }
 
+.prose .rotation-method-table {
+  width: 100%;
+}
+
+.prose .rotation-method-table tr > :first-child {
+  min-width: 8.5em;
+  padding-inline-end: 0.75em;
+  white-space: nowrap;
+}
+
 .prose h2,
 .prose h3,
 .prose h4 {
