@@ -32,19 +32,25 @@ This is the current recomended way of rotating an object inside UE
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-<video controls playsinline preload="metadata" aria-label="Fan collision demo in Unreal Engine" style="display: block; width: 100%; height: auto;">
-  <source src="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4' | relative_url }}" type="video/mp4">
-  <a href="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4' | relative_url }}">Watch the fan collision demo</a>.
-</video>
-
 ### Material - WPO Rotate
 WPO was used for a lot of cheap tricks in the past, and its something i personally miss a lot in my day to day work, however with the new pipelines using Nanite WPO is becoming something more expensive than before.
 
 ![Unreal material function that normalizes the world-space axis and uses RotateAboutAxis to produce a World Position Offset]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png' | relative_url }})
 
 
-## TL;DR
-I want to add conclusions and pro / cons / maybe an unreal insight trace with all of them
+## Conclusions
+
+| Category | Blueprint Tick | Rotating Movement Component | Material WPO |
+| --- | --- | --- | --- |
+| **Visual** | Rotates the actor or component you target. | Rotates the component you assign. Change its Rotation Rate at runtime to speed up or slow down. | Rotates the rendered vertices around the material pivot. Shading normals may need a matching rotation. |
+| **Collision** | Collision follows the transform. A rotation step can miss contacts between frames. | Collision follows the updated component. The rotation step does not sweep for hits. | Collision stays at the original pose. |
+| **Performance** | Runs Blueprint logic and updates a transform each frame. | The native component still ticks and updates a transform each frame. | The shader moves the vertices. GPU cost depends on mesh complexity and how many instances are visible. Profile with Nanite enabled if the mesh uses it. |
+| **When to use** | You need to calculate the angle yourself, like tracking a target or stopping at a specific angle. | You want continuous spin with a configurable rate, like a fan that ramps up or winds down. | You want purely visual movement, like background fans with stationary collision or no collision. |
+
+<video controls playsinline preload="metadata" aria-label="Fan collision demo in Unreal Engine" style="display: block; width: 100%; height: auto;">
+  <source src="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4' | relative_url }}" type="video/mp4">
+  <a href="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4' | relative_url }}">Watch the fan collision demo</a>.
+</video>
 
 
 /Andrei
