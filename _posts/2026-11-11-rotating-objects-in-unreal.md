@@ -70,3 +70,5 @@ WPO was used for a lot of cheap tricks in the past, and its something i personal
 | **When to use** | You need to calculate the angle yourself, like tracking a target or stopping at a specific angle. | You want continuous spin with a configurable rate, like a fan that ramps up or winds down. | You want purely visual movement, like background fans with stationary collision or no collision. |
 
 /Andrei
+
+[Read the alternate version]({{ '/blog/2026/11/11/rotating-objects-in-unreal/alternate/' | relative_url }})
