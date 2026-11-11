@@ -1032,6 +1032,11 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
   border-collapse: collapse;
 }
 
+.prose .rotation-method-table thead th {
+  padding-block-end: 0.35em;
+  border-block-end: 1px solid var(--line);
+}
+
 .prose .rotation-method-table tr > :first-child {
   min-width: 10em;
   padding-inline-end: 0.75em;
