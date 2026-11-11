@@ -18,7 +18,7 @@ Rotating an object in a game seems trivial, right? Weeeeeeell… it is, right up
 
 I used a free Megascans fan to try three approaches: Blueprint Tick, Unreal's built-in Rotating Movement Component, and World Position Offset in a material.
 
-I'm human, and this post is based on what I know as of November 11, 2026.
+`I'm human, and this post is based on what I know as of November 11, 2026.`
 
 ## Blueprint Tick
 
