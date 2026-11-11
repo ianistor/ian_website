@@ -5,10 +5,8 @@
 {% endif %}
 <a class="post-neighbor post-neighbor--{{ include.direction }}" rel="{{ include.direction }}" href="{{ neighbor.url | relative_url }}">
   {% if thumbnail != blank %}
-    <img class="post-neighbor-thumbnail" src="{{ thumbnail | relative_url | escape }}" alt="" width="64" height="48" loading="lazy">
+    <img class="post-neighbor-cover" src="{{ thumbnail | relative_url | escape }}" alt="" loading="lazy">
   {% endif %}
-  <span class="post-neighbor-text">
-    <span class="post-neighbor-label">{{ include.label }}</span>
-    <span>{{ neighbor.title | escape }}</span>
-  </span>
+  <span class="post-neighbor-label">{{ include.label }}</span>
+  <span class="post-neighbor-title">{{ neighbor.title | escape }}</span>
 </a>
