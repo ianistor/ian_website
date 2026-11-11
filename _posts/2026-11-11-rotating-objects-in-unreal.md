@@ -50,11 +50,9 @@ Add a Rotating Movement Component, enable **Rotation in Local Space**, and set *
 
 ### Blueprint Tick vs. Rotating Movement performance
 
-Both methods do CPU work every frame. Blueprint Tick runs the graph through the Blueprint VM before calling Unreal's native rotation function. Rotating Movement runs the rotation in its native C++ component tick, which avoids that Blueprint execution overhead. Both still update a transform, including any work that update triggers for attached components or collision.
+So what am I actually saving by using the Rotating Movement Component? With Blueprint Tick, Unreal runs my graph through the Blueprint VM every frame before it gets to the actual rotation. The component does that part in C++. Either way, Unreal still has to move the blades and update any attached parts or collision that move with them.
 
-For one fan with a simple graph, I'd expect the difference to be small. With many fans ticking, the Blueprint overhead can add up. To see how much it matters, I'd compare Game Thread time in Unreal Insights with the same fan count, component hierarchy, and collision settings.
-
-[Blueprint vs. C++ performance](https://dev.epicgames.com/documentation/unreal-engine/coding-in-unreal-engine-blueprint-vs-cplusplus) · [Rotating Movement Component API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/URotatingMovementComponent)
+For one fan and a couple of nodes, I doubt I'd notice. A factory full of fans? That's where I'd open Unreal Insights and check the Game Thread. I'd use the same number of fans, the same component setup, and the same collision settings for both runs so I'm measuring the cost of how I spin them.
 
 ## Material World Position Offset
 
