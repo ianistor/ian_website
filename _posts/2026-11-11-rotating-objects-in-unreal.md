@@ -66,13 +66,13 @@ This time the material moves the vertices. In the graph below, I transform the f
 
 ## Conclusions
 
-| Use case | Where I'd start |
+| Use case | What to use |
 | --- | --- |
-| A security camera that follows the player and stops at a yaw limit | **Blueprint Tick** gives me direct control over the angle and its limits. |
+| A gameplay fan puzzle | **Blueprint Tick** gives you direct control over the angle,limits,speed and axis in realtime |
 | A ventilation fan that ramps up when the player flips a switch | **Rotating Movement Component** handles the spin while a Timeline changes its rate. |
-| A spinning trap that must register hits as the blade passes through a player | I'd drive the blade transform and add a gameplay hit check that covers the space between rotation steps. |
+| A spinning trap that must register hits as the blade passes through a player |**Blueprint Tick or Component**  |
 | Rooftop fans that players only see from a distance | **WPO** is an option for visual-only spin. For Nanite meshes I'd start with transform rotation and measure at the fan count I expect to ship. |
 
-For a performance comparison, I'd capture Game Thread and GPU time in Unreal Insights with the same mesh, camera, and fan count. I'd start with stationary fans, then repeat for each method.
+
 
 /Andrei
