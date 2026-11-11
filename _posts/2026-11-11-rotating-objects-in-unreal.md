@@ -1,11 +1,11 @@
 ---
 layout: post
-title: "Three Ways to Spin a Fan in Unreal Engine"
+title: "Three Ways to Spin a Fan in UE"
 date: 2026-11-11
 tags: [unreal, workflow]
 image: "/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png"
 thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4"
-excerpt: "One fan, three ways to spin it, and what each means for collision and performance."
+excerpt: "Three ways to spin, and what each means for collision and performance."
 ---
 
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
@@ -24,7 +24,7 @@ I used a free Megascans fan to try three approaches: Blueprint Tick, Unreal's bu
 
 The quick version is to connect Event Tick to Add Actor Local Rotation. The graph below applies one degree per frame. For a steady speed across frame rates, multiply your rate in degrees per second by Delta Seconds before passing it into the rotation node.
 
-For a fan with a stationary housing, put the blades on their own mesh component and apply the local rotation to that component. Check that the blade pivot is at the hub.
+For a fan with a stationary housing, put the blades on their own mesh component and apply the local rotation to that component. Make sure pivot of the mesh is set accordingly otherwise it will rotate from another base.
 
 ![Blueprint Tick calling Add Actor Local Rotation with a fixed one-degree step]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
 
@@ -54,7 +54,7 @@ Add a Rotating Movement Component, enable **Rotation in Local Space**, and set *
 
 So what am I actually saving by using the Rotating Movement Component? With Blueprint Tick, Unreal runs my graph through the Blueprint VM (virtual machine) every frame before it gets to the actual rotation. The component does that part in C++. Either way, Unreal still has to move the blades and update any attached parts or collision that move with them.
 
-For one fan and a couple of nodes, I doubt I'd notice. A factory full of fans? That's where I'd open Unreal Insights and check the Game Thread. I'd use the same number of fans, the same component setup, and the same collision settings for both runs so I'm measuring the cost of how I spin them.
+For one fan and a couple of nodes, I doubt any performance spikes will be seen, however the situation is a bit different if we have a warehouse full of them or plenty of them on screen.
 
 ## Material World Position Offset
 
