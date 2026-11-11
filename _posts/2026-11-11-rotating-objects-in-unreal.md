@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Different methods to rotate objects in Unreal and their pros and cons"
+title: "Spin methods and when to use them"
 date: 2026-11-11
 tags: [unreal, workflow]
 image: "/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png"
