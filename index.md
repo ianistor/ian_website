@@ -101,6 +101,8 @@ title: Home
             <div class="card-thumb project-text-placeholder" aria-label="{{ placeholder_label }}">
               <span>{{ placeholder_label }}</span>
             </div>
+          {% elsif post.thumbnail_video %}
+            {% include post-video-thumbnail.html post=post %}
           {% elsif post.image == blank and post.youtube_id == blank %}
             <div class="card-thumb project-text-placeholder" aria-label="{{ placeholder_label }}">
               <span>{{ placeholder_label }}</span>

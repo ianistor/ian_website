@@ -15,7 +15,9 @@ layout: default
   {% assign posts_for_tag = site.tags[page.tag] | where_exp: "post", "post.hidden != true" %}
   {% for post in posts_for_tag %}
     <article class="card">
-      {% if post.image %}
+      {% if post.thumbnail_video %}
+        {% include post-video-thumbnail.html post=post %}
+      {% elsif post.image %}
         <img src="{{ post.image | relative_url }}" alt="" class="card-thumb">
       {% elsif post.youtube_id %}
         <img src="https://img.youtube.com/vi/{{ post.youtube_id }}/hqdefault.jpg" alt="" class="card-thumb">

@@ -4,6 +4,7 @@ title: "Different methods to rotate objects in Unreal and their pros and cons"
 date: 2026-11-11
 tags: [unreal, workflow]
 image: "/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png"
+thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4"
 excerpt: "Ways to rotate objects and when to use them"
 ---
 
