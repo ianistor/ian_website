@@ -48,6 +48,14 @@ Add a Rotating Movement Component, enable **Rotation in Local Space**, and set *
 | **Cons** | ⚠️ The component still ticks and updates a transform every frame. |
 {: .rotation-table .rotation-method-table}
 
+### Blueprint Tick vs. Rotating Movement performance
+
+Both methods do CPU work every frame. Blueprint Tick runs the graph through the Blueprint VM before calling Unreal's native rotation function. Rotating Movement runs the rotation in its native C++ component tick, which avoids that Blueprint execution overhead. Both still update a transform, including any work that update triggers for attached components or collision.
+
+For one fan with a simple graph, I'd expect the difference to be small. With many fans ticking, the Blueprint overhead can add up. To see how much it matters, I'd compare Game Thread time in Unreal Insights with the same fan count, component hierarchy, and collision settings.
+
+[Blueprint vs. C++ performance](https://dev.epicgames.com/documentation/unreal-engine/coding-in-unreal-engine-blueprint-vs-cplusplus) · [Rotating Movement Component API](https://dev.epicgames.com/documentation/unreal-engine/API/Runtime/Engine/URotatingMovementComponent)
+
 ## Material World Position Offset
 
 I used WPO for a lot of cheap tricks in the past, and I miss that in my day-to-day work. With Nanite in the pipeline, I pay closer attention to what that shader work costs.
