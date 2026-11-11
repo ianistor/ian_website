@@ -32,7 +32,7 @@ For a fan with a stationary housing, put the blades on their own mesh component 
 | **Collisions** | ✅ Enabled collision follows the transform. ⚠️ The rotation can skip contacts between frames. |
 | **Pros** | ✅ You can calculate the angle yourself and clamp it, steer toward a target, or stop at a specific orientation. |
 | **Cons** | ⚠️ Each ticking actor runs the graph and updates a transform every frame. |
-{: .rotation-method-table}
+{: .rotation-table .rotation-method-table}
 
 ## Rotating Movement Component
 
@@ -46,7 +46,7 @@ Add a Rotating Movement Component, enable **Rotation in Local Space**, and set *
 | **Collisions** | ✅ Enabled collision follows the updated component. ⚠️ The rotation step applies without sweeping for hits along the way. |
 | **Pros** | ✅ Unreal handles continuous rotation. Blueprint can change the rate whenever gameplay needs it. |
 | **Cons** | ⚠️ The component still ticks and updates a transform every frame. |
-{: .rotation-method-table}
+{: .rotation-table .rotation-method-table}
 
 ## Material World Position Offset
 
@@ -62,7 +62,7 @@ This time the material moves the vertices. In the graph below, I transform the f
 | **Collisions** | ⚠️ Collision stays at the mesh's original pose while the rendered blades spin. |
 | **Pros** | ✅ The animation runs without a per-fan Blueprint Tick or transform update. |
 | **Cons** | ⚠️ **Avoid WPO on Nanite meshes when possible.** If you need it, profile GPU cost at your expected instance count and check that the displacement bounds cover the whole spin. |
-{: .rotation-method-table}
+{: .rotation-table .rotation-method-table}
 
 ## Conclusions
 
@@ -72,6 +72,7 @@ This time the material moves the vertices. In the graph below, I transform the f
 | A ventilation fan that ramps up when the player flips a switch | **Rotating Movement Component** handles the spin while a Timeline changes its rate. |
 | A spinning trap that must register hits as the blade passes through a player |**Blueprint Tick or Component**  |
 | Rooftop fans that players only see from a distance | **WPO** is an option for visual-only spin. For Nanite meshes I'd start with transform rotation and measure at the fan count I expect to ship. |
+{: .rotation-table}
 
 
 

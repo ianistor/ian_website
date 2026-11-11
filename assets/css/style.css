@@ -1027,27 +1027,30 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
   color: var(--text);
 }
 
-.prose .rotation-method-table {
+.prose .rotation-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.prose .rotation-method-table thead th {
+.prose .rotation-table thead th {
   padding-block-end: 0.35em;
   border-block-end: 1px solid var(--line);
 }
 
-.prose .rotation-method-table tr > :first-child {
-  min-width: 10em;
+.prose .rotation-table tr > :first-child {
   padding-inline-end: 0.75em;
   border-inline-end: 1px solid var(--line);
+}
+
+.prose .rotation-table tr > :nth-child(2) {
+  padding-inline-start: 0.75em;
+}
+
+.prose .rotation-method-table tr > :first-child {
+  min-width: 10em;
   overflow-wrap: normal;
   word-break: normal;
   white-space: nowrap;
-}
-
-.prose .rotation-method-table tr > :nth-child(2) {
-  padding-inline-start: 0.75em;
 }
 
 .prose h2,
