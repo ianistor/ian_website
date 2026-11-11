@@ -68,9 +68,12 @@ layout: default
       {% endif %}
     </div>
 
-    <aside class="project-sidebar toc-sidebar" aria-label="Table of contents">
+    <aside class="project-sidebar toc-sidebar" aria-labelledby="post-toc-heading">
+      {% if page.hidden != true and page.published != false %}
+        {% include post-share.html %}
+      {% endif %}
       <div class="project-fact">
-        <h3>Table of contents</h3>
+        <h3 id="post-toc-heading">Table of contents</h3>
         <ul class="toc-list" id="page-toc"></ul>
       </div>
     </aside>
