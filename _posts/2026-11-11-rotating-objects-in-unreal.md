@@ -9,14 +9,11 @@ excerpt: "Ways to rotate objects and when to use them"
 ---
 
 
+{% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
+
 ## Quick Intro
 Rotating an object in any game seems like a trivial thing, right ? weeeeeeell....it is but its very important to know the right way of doing it, and to know the right way of doing it you need to know all the ways to do it and when they apply.
 In our example lets take a FAN as our perfect candidate, in this case ill use this free Megascan asset.
-
-<video controls playsinline preload="metadata" aria-label="Fan rotation demo in Unreal Engine" style="display: block; width: 100%; height: auto;">
-  <source src="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4' | relative_url }}" type="video/mp4">
-  <a href="{{ '/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4' | relative_url }}">Watch the fan rotation demo</a>.
-</video>
 
 Disclaimer - I'm human and this post is based on my current knowledge as of 11th of Nov 2026.
 
@@ -71,8 +68,5 @@ WPO was used for a lot of cheap tricks in the past, and its something i personal
 | **Collision** | Collision follows the transform. A rotation step can miss contacts between frames. | Collision follows the updated component. The rotation step does not sweep for hits. | Collision stays at the original pose. |
 | **Performance** | Runs Blueprint logic and updates a transform each frame. | The native component still ticks and updates a transform each frame. | The shader moves the vertices. GPU cost depends on mesh complexity and how many instances are visible. Profile with Nanite enabled if the mesh uses it. |
 | **When to use** | You need to calculate the angle yourself, like tracking a target or stopping at a specific angle. | You want continuous spin with a configurable rate, like a fan that ramps up or winds down. | You want purely visual movement, like background fans with stationary collision or no collision. |
-
-{% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" %}
-
 
 /Andrei

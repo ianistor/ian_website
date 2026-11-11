@@ -33,16 +33,30 @@ document.querySelectorAll('[data-video-compare]').forEach((comparison) => {
     video.addEventListener('error', showPlaybackError, true);
   });
 
+  const playComparison = (autoplay = false) => {
+    errorMessage.hidden = true;
+    syncCollision();
+    Promise.all([visual.play(), collision.play()]).catch((error) => {
+      if (error.name === 'AbortError') return;
+      if (autoplay && error.name === 'NotAllowedError') {
+        visual.pause();
+        collision.pause();
+        return;
+      }
+      showPlaybackError();
+    });
+  };
+
   toggle.addEventListener('click', () => {
     if (!visual.paused) {
       visual.pause();
       return;
     }
 
-    errorMessage.hidden = true;
-    syncCollision();
-    Promise.all([visual.play(), collision.play()]).catch((error) => {
-      if (error.name !== 'AbortError') showPlaybackError();
-    });
+    playComparison();
   });
+
+  if (comparison.hasAttribute('data-video-compare-autoplay')) {
+    playComparison(true);
+  }
 });
