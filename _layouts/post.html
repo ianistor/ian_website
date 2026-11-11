@@ -59,8 +59,13 @@ layout: default
       {% endif %}
     </aside>
 
-    <div class="prose project-main-content">
-      {{ content }}
+    <div class="project-main-content">
+      <div class="prose">
+        {{ content }}
+      </div>
+      {% if page.hidden != true and page.published != false %}
+        {% include post-footer.html %}
+      {% endif %}
     </div>
 
     <aside class="project-sidebar toc-sidebar" aria-label="Table of contents">
