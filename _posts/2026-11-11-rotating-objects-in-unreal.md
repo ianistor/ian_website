@@ -8,88 +8,97 @@ thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual
 excerpt: "Three ways to spin, and what each means for collision and performance."
 ---
 
+Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right? Well… then you ask whether the blades should hit anything, whether the player can change the speed, and what happens if you put 400 of them in a level.
+
+I used a free Megascans fan to try three ways of doing it. For a decorative fan, I'd go with **World Position Offset (WPO)**. It stayed close to the static baseline in my test. If the collision has to spin too, I'd use **Rotating Movement** or **Blueprint Tick**, depending on how much control I need. I tried the Blueprint setup, but the timing comparison below covers the native component and WPO.
+
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
 
 *Compare how the blades look with how their collision behaves.*
 
-## Which method should I use?
+## Which one would I use?
 
-| Use case | What I'd use |
-| --- | --- |
-| A gameplay puzzle that needs precise control over the blade angle | [Blueprint Tick](#blueprint-tick) |
-| A ventilation fan that ramps up when the player flips a switch | [Rotating Movement Component](#rotating-movement-component), with a Timeline to change the rate |
-| A spinning trap that must register contact as the blade passes through a player | [Blueprint Tick](#blueprint-tick) or [Rotating Movement Component](#rotating-movement-component) to move the collision with the blades. Test fast spins for missed contacts. |
-| More than roughly 10–20 fans, or a fan whose blade collision isn't important | [World Position Offset](#material-world-position-offset) when the spin can be visual-only. |
+| Method | When I'd use it | Collision | Measured cost |
+| --- | --- | --- | --- |
+| [Blueprint Tick](#blueprint-tick) | A puzzle or trap that needs custom control over blade angle | Follows the transform when enabled. Test fast spins for missed contacts. | Unmeasured |
+| [Rotating Movement Component](#rotating-movement-component) | Continuous rotation with a rate that gameplay can change | Follows the updated component. The rotation step doesn't sweep for hits. | 3.67 ms/frame in movement ticks (benchmark median) |
+| [Material WPO](#material-world-position-offset) | Decorative spin | Stays at the mesh's original pose | Close to static in the three-level test. About 0.11 ms/frame of additional VSM rendering in the controlled toggle test. |
 {: .rotation-table .fan-method-guide}
 
-## Context
+## Okay, what happens with 400 of them?
 
-Rotating an object in a game seems trivial, right? Weeeeeeell… it is, right up until you ask whether the blades should hit anything, whether the player can change the speed, or what happens when you put a hundred of them in a level.
+![Game-thread and GPU scene-render times for static, WPO, and component rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/FanBench-Methods-Comparison.png' | relative_url }})
 
-I used a free Megascans fan to try three approaches: Blueprint Tick, Unreal's built-in Rotating Movement Component, and World Position Offset in a material.
+I started with the fans doing absolutely nothing. That gave me a baseline of **8.36 ms/frame on the game thread**. WPO came in at **8.34 ms**. I wouldn't read much into those two hundredths of a millisecond. The numbers moved around by more than that between captures.
 
-`I'm human, and this post is based on what I know as of November 11, 2026.`
+The native component was the one that stood out. The game thread went up to **11.70 ms/frame**, or **3.34 ms more than static**. The GPU scene-render times were closer together. You can see them on the right of the chart. CPU and GPU work overlap, so adding the two bars wouldn't give you the frame time.
 
 ## Blueprint Tick {#blueprint-tick}
 
-The quick version is to connect Event Tick to Add Actor Local Rotation. The graph below applies one degree per frame. For a steady speed across frame rates, multiply your rate in degrees per second by Delta Seconds before passing it into the rotation node.
+Connect **Event Tick** to **Add Actor Local Rotation**. The graph below applies one degree per frame. For steady speed across frame rates, multiply degrees per second by **Delta Seconds**. If the housing stays still, rotate a separate blade component with its pivot at the hub.
 
-For a fan with a stationary housing, put the blades on their own mesh component and apply the local rotation to that component. Make sure pivot of the mesh is set accordingly otherwise it will rotate from another base.
+![Blueprint Tick calling Add Actor Local Rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
 
-![Blueprint Tick calling Add Actor Local Rotation with a fixed one-degree step]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
-
-| Category | What to expect |
-| --- | --- |
-| **Visual&nbsp;Updates** | ✅ The graph controls the rotation applied on each tick. |
-| **Collisions** | ✅ Enabled collision follows the transform. ⚠️ The rotation can skip contacts between frames. |
-| **Pros** | ✅ You can do any sort of crazy or bespoke logic of the rotation you need |
-| **Cons** | ⚠️ Each ticking actor runs the graph and updates a transform every frame. |
-{: .rotation-table .rotation-method-table}
+This is the one I'd reach for when the angle matters to gameplay. Every ticking fan runs the graph and updates a transform. I didn't trace this setup, so I don't have a number for what the Blueprint VM adds here.
 
 ## Rotating Movement Component {#rotating-movement-component}
 
-Add a Rotating Movement Component, enable **Rotation in Local Space**, and set **Rotation Rate** on the axis that runs through the shaft. If the housing and blades are separate components, use **Set Updated Component** to target the blades. The component handles the spin, and you can change its rate at runtime. Drive the rate with a Timeline if you want the fan to wind down after the power goes out.
+Enable **Rotation in Local Space** and set **Rotation Rate** around the shaft axis. Use **Set Updated Component** to target the blades if they have their own component. A Timeline can change the rate if the fan needs to wind down when the power goes out.
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-| Category | What to expect |
-| --- | --- |
-| **Visual&nbsp;Updates** | ✅ The assigned component rotates at the rate you set. |
-| **Collisions** | ✅ Enabled collision follows the updated component. ⚠️ The rotation step applies without sweeping for hits along the way. |
-| **Pros** | ✅ Unreal handles continuous rotation. Blueprint can change the rate whenever gameplay needs it. |
-| **Cons** | ⚠️ The component still ticks and updates a transform every frame, however it skips the BP VM. |
-{: .rotation-table .rotation-method-table}
+So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights, I switched Timers to **Game Frame** across the three component regions. The `RotatingMovement` row shows **3.66 ms/frame median** (`I.Med`) and **3.82 ms/frame average** (`I.Avg`).
 
-### Blueprint Tick vs. Rotating Movement performance
+![Unreal Insights in Game Frame mode showing 3.66 ms median and 3.82 ms average for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Game-Frame.png' | relative_url }})
 
-So what am I actually saving by using the Rotating Movement Component? With Blueprint Tick, Unreal runs my graph through the Blueprint VM (virtual machine) every frame before it gets to the actual rotation. The component does that part in C++. Either way, Unreal still has to move the blades and update any attached parts or collision that move with them.
-
-For one fan and a couple of nodes, I doubt any performance spikes will be seen, however the situation is a bit different if we have a warehouse full of them or plenty of them on screen.
+*The chart's trimmed-window benchmark median was 3.67 ms/frame.*
 
 ## Material World Position Offset {#material-world-position-offset}
 
-I used WPO for a lot of cheap tricks in the past, and I miss that in my day-to-day work. With Nanite in the pipeline, I pay closer attention to what that shader work costs.
+I transform the shaft axis from local space to world space and normalize it before passing it to **RotateAboutAxis**. The pivot is at the hub, and **Time × Speed** drives the angle. The function's displacement goes into **World Position Offset**. Check the shading normals if highlights look wrong as the blades turn.
 
-I'd use WPO for decorative fans when the blades don't need accurate collision, and it's the first option I'd profile once a scene has more than roughly 10–20 fans and the spin can be visual-only. That's my rule of thumb. I'd compare it with transform rotation at the fan count I expect to ship, especially with Nanite enabled.
+![Material graph with a normalized world-space axis feeding RotateAboutAxis]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png' | relative_url }})
 
-This time the material moves the vertices. In the graph below, I transform the fan's local shaft axis to world space, normalize it, and pass it into **RotateAboutAxis**. I use the blade mesh's pivot at the hub and drive the angle with **Time × Speed**. The function gives me the displacement to plug into **World Position Offset**. If the highlights look wrong as the blades turn, check the shading normals too.
+This was the bit I wanted to poke at. WPO gets rid of the per-fan rotation tick, but what does it cost with Nanite and shadows? I went back to the same 400 fans and flipped **Evaluate World Position Offset** on the components. Same camera, same material. I checked both states in Nanite's **Evaluate WPO** view, then turned the visualization off before taking the trace.
 
-![Material function with a normalized world-space axis feeding RotateAboutAxis]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png' | relative_url }})
+| GPU metric | WPO on minus off |
+| --- | ---: |
+| Whole-scene `SceneRender` | +0.07 ms/frame median paired difference, with pair results from −0.16 to +0.64 ms |
+| `RenderVirtualShadowMaps` | About +0.11 ms/frame, higher in all four pairs |
+| `Shadow.Virtual.ProcessInvalidationsGPU` | About 0.001 ms/frame in both states |
+{: .rotation-table}
 
-| Category | What to expect |
-| --- | --- |
-| **Visual&nbsp;Updates** | ✅ The rendered blades rotate around the material pivot. |
-| **Collisions** | ⚠️ Collision stays at the mesh's original pose while the rendered blades spin. |
-| **Pros** | ✅ The animation runs without a per-fan Blueprint Tick or transform update. |
-| **Cons** | ⚠️ With Nanite, profile GPU cost at your expected instance count and check that the displacement bounds cover the whole spin. |
-{: .rotation-table .rotation-method-table}
+<details markdown="1">
+<summary>View the WPO on/off trace screenshots</summary>
 
-## Conclusions
+**WPO enabled — `WPO_On_01`**
 
-**Funny enough testing performances in traces shows WPO is still the clear winner performance wise, even if Nanite is on. (will share more data analysis soon)**
+![Unreal Insights GPU Timers for WPO enabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-On-01-Timers.png' | relative_url }})
 
+**WPO disabled — `WPO_Off_02`**
 
+![Unreal Insights GPU Timers for WPO disabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02-Timers.png' | relative_url }})
 
+*The screenshots show inclusive totals for the first pair. The two shadow-rendering rows together average 0.542 ms/frame with WPO on and 0.457 ms/frame with it off. The 0.11 ms result uses medians across all four pairs.*
 
+</details>
+
+**What about the shadow cache?** I looked at the invalidation timer first. It was about a microsecond either way. The part that moved was shadow rendering, which is also where Unreal redraws pages it can no longer reuse. I didn't count invalidated pages in this test, so I can't say how much of that extra 0.11 ms came from the cache and how much came from drawing the animated geometry. [Epic's Virtual Shadow Map profiling guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/virtual-shadow-maps-in-unreal-engine)
+
+## Trace setup and how to read it
+
+I used **Unreal Engine 5.7.3** on a **GeForce RTX 3080** in realtime editor simulation. Each map had the same 20×20 grid of Nanite Megascans fans, a ground plane, and one overhead directional light. I used a fixed camera and recorded the `Cpu`, `Gpu`, `Frame`, and `Region` channels.
+
+| Capture | Timing Regions track | Timers to inspect |
+| --- | --- | --- |
+| Static baseline | `FanBench_Static_R1` through `R3` | `FEngineLoop::Tick` on `GameThread`, `SceneRender` on `GPU0-Graphics0` |
+| Rotating Movement | `FanBench_Component_R1` through `R3` | Same frame timers, plus `RotatingMovement` on `GameThread` |
+| Material WPO | `FanBench_WPO_R1` through `R3` | Same frame timers |
+| WPO on/off | `WPO_On_01` and `WPO_Off_02` for the screenshot pair | `SceneRender`, `RenderVirtualShadowMaps`, and `Shadow.Virtual.ProcessInvalidationsGPU` on `GPU0-Graphics0` |
+{: .rotation-table}
+
+In Timing Insights, select a region and press **Enter** to aggregate timers over that interval. **Count** is the number of timer calls. **Incl** is total inclusive time in the selection. For example, each component-rotation frame contains 400 movement calls.
+
+The three-level chart uses the median of three capture-window medians per variant. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
 
 /Andrei
