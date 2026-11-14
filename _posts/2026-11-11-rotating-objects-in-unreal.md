@@ -51,7 +51,7 @@ This is the one I'd reach for when the blade angle matters to gameplay. Connect 
 **Cost.** With 400 fans, the Blueprint actor ticks took a median **5.24 ms per game frame**, including the transform updates.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F41B;</span>Blueprint Tick trace</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>Blueprint Tick trace</summary>
 
 ![Insights Game Frame mode showing a 5.24 ms inclusive median for the Blueprint actor tick]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Blueprint-Game-Frame.png' | relative_url }})
 
@@ -68,7 +68,7 @@ I'd use this when I want the fan to keep spinning and gameplay just needs to cha
 **Cost.** The component runs in C++, and it still has to update the transform each frame. The 400 movement ticks took a median **3.24 ms per game frame**. In the same editor session, the whole game thread took **11.65 ms/frame** with the component and **13.80 ms/frame** with Blueprint Tick.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F41B;</span>Rotating Movement Component trace</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>Rotating Movement Component trace</summary>
 
 ![Insights Game Frame mode showing a 3.24 ms inclusive median for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Matched-Game-Frame.png' | relative_url }})
 
@@ -85,7 +85,7 @@ For a decorative fan, this is where I'd start. Feed the normalized world-space s
 **Cost.** There’s no per-fan rotation tick. The game-thread timings stayed close to static in my test. When I toggled WPO on the same 400 fans, Virtual Shadow Map rendering went up by about **0.11 ms/frame**. The whole-scene GPU difference varied more across runs.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F41B;</span>WPO vs. static trace timings</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>WPO vs. static trace timings</summary>
 
 | 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) |
 | --- | ---: | ---: |
