@@ -67,6 +67,10 @@ For a decorative fan, this is where I'd start. Feed the normalized world-space s
 | Material WPO | 8.34 | 6.35 |
 {: .rotation-table}
 
+![Unreal Insights export showing game-thread and GPU scene-render medians for all static and WPO capture windows]({{ '/assets/images/blog/rotating-objects-in-unreal/Static-WPO-Trace-Export.png' | relative_url }})
+
+*Timing export from Unreal Insights. The last two columns show median milliseconds per frame in each window.*
+
 Both differences were within the variation across the three measurement windows. These are whole-scene timings from the static and WPO levels, which used different materials. In Insights, I used `FEngineLoop::Tick` on `GameThread` and `SceneRender` on `GPU0-Graphics0`.
 
 </details>
