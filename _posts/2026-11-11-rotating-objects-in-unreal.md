@@ -95,13 +95,31 @@ I made three matching levels with 400 copies of the same Nanite Megascans fan in
 | Rotating Movement Component | 11.70 ms | 6.66 ms |
 {: .rotation-table}
 
+![Game-thread and GPU scene-render times for 400 static, WPO, and component-rotated fans]({{ '/assets/images/blog/rotating-objects-in-unreal/FanBench-Methods-Comparison.png' | relative_url }})
+
+Static and WPO had effectively the same game-thread frame time in this run. The 0.02 ms difference was within the variation across capture windows.
+
 The component trace recorded 400 `RotatingMovement` calls per measured frame. Together they took **3.67 ms per frame** in inclusive game-thread time. The game-thread and GPU columns measure work that can overlap.
+
+![Unreal Insights Timers showing 98,400 RotatingMovement calls totaling 974.7 ms inclusive]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Rotation.png' | relative_url }})
+
+*The Timers panel shows the full selection. That works out to 3.96 ms/frame on average over 246 frames. The 3.67 ms figure above uses trimmed capture-window medians.*
 
 ### WPO on and off in the same level
 
 I reran the WPO level with the same camera and material, toggling **Evaluate World Position Offset** on the 400 components. Nanite's **Evaluate WPO** visualization showed the fans green with evaluation enabled and red with it disabled. I turned the visualization off before timing.
 
 The median paired difference in GPU `SceneRender` was **+0.07 ms/frame** with WPO on. The four differences ranged from **−0.16 to +0.64 ms/frame**, so the whole-scene change was inconsistent. The combined `RenderVirtualShadowMaps` scopes were **about 0.11 ms/frame higher** with WPO on, with an increase in every pair.
+
+**WPO enabled**
+
+![Unreal Insights GPU Timers for the WPO enabled capture window]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-On-01.jpg' | relative_url }})
+
+**WPO disabled**
+
+![Unreal Insights GPU Timers for the WPO disabled capture window]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02.jpg' | relative_url }})
+
+*The screenshots show inclusive totals for the first pair. Summing the two shadow-rendering rows and dividing by frame count gives 0.542 ms/frame with WPO on and 0.457 ms/frame with WPO off. The 0.11 ms figure uses all four pairs.*
 
 ### Did the trace account for shadow-cache invalidation?
 
