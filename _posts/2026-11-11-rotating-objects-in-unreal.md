@@ -38,7 +38,7 @@ In this editor test, WPO’s game-thread time was close to static. Rotating Move
 
 | 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) |
 | --- | ---: | ---: |
-| Static | 8.36 | 6.32 |
+| Static(our baseline) | 8.36 | 6.32 |
 | Material WPO | 8.34 | 6.35 |
 | Rotating Movement Component | 11.65 <span class="rotation-tick-delta">(+3.31 ms vs static)</span> | 6.61 |
 | Blueprint Tick | 13.80 <span class="rotation-tick-delta">(+5.44 ms vs static)</span> | 6.92 |
