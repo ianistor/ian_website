@@ -19,7 +19,7 @@ excerpt: "Three ways to spin, and what each means for collision and performance.
 | A gameplay puzzle that needs precise control over the blade angle | [Blueprint Tick](#blueprint-tick) |
 | A ventilation fan that ramps up when the player flips a switch | [Rotating Movement Component](#rotating-movement-component), with a Timeline to change the rate |
 | A spinning trap that must register contact as the blade passes through a player | [Blueprint Tick](#blueprint-tick) or [Rotating Movement Component](#rotating-movement-component) to move the collision with the blades. Test fast spins for missed contacts. |
-| More than roughly 10–20 fans, or a fan whose blade collision isn't important | [World Position Offset](#material-world-position-offset) when the spin can be visual-only. |
+| Decorative fans whose blades don't need moving collision | [World Position Offset](#material-world-position-offset) when the spin can be visual-only. |
 {: .rotation-table .fan-method-guide}
 
 ## Context
@@ -64,13 +64,13 @@ Add a Rotating Movement Component, enable **Rotation in Local Space**, and set *
 
 So what am I actually saving by using the Rotating Movement Component? With Blueprint Tick, Unreal runs my graph through the Blueprint VM (virtual machine) every frame before it gets to the actual rotation. The component does that part in C++. Either way, Unreal still has to move the blades and update any attached parts or collision that move with them.
 
-For one fan and a couple of nodes, I doubt any performance spikes will be seen, however the situation is a bit different if we have a warehouse full of them or plenty of them on screen.
+I didn't benchmark Blueprint Tick in the 400-fan test below. The CPU result measures the native Rotating Movement Component, including the work it calls.
 
 ## Material World Position Offset {#material-world-position-offset}
 
 I used WPO for a lot of cheap tricks in the past, and I miss that in my day-to-day work. With Nanite in the pipeline, I pay closer attention to what that shader work costs.
 
-I'd use WPO for decorative fans when the blades don't need accurate collision, and it's the first option I'd profile once a scene has more than roughly 10–20 fans and the spin can be visual-only. That's my rule of thumb. I'd compare it with transform rotation at the fan count I expect to ship, especially with Nanite enabled.
+I'd start with WPO for decorative fans when the blades don't need moving collision. The cost depends on how much geometry the GPU processes and how much shadow work the animation triggers, so I'd profile it at the fan count and camera distances I expect to ship.
 
 This time the material moves the vertices. In the graph below, I transform the fan's local shaft axis to world space, normalize it, and pass it into **RotateAboutAxis**. I use the blade mesh's pivot at the hub and drive the angle with **Time × Speed**. The function gives me the displacement to plug into **World Position Offset**. If the highlights look wrong as the blades turn, check the shading normals too.
 
@@ -84,12 +84,36 @@ This time the material moves the vertices. In the graph below, I transform the f
 | **Cons** | ⚠️ With Nanite, profile GPU cost at your expected instance count and check that the displacement bounds cover the whole spin. |
 {: .rotation-table .rotation-method-table}
 
-## Conclusions
+## What 400 fans cost
 
-**Funny enough testing performances in traces shows WPO is still the clear winner performance wise, even if Nanite is on. (will share more data analysis soon)**
+I made three matching levels with 400 copies of the same Nanite Megascans fan in a 20×20 grid, a ground plane, and one directional light pointing straight down. I used the same fixed camera in realtime editor simulation.
 
+| Variant | Game-thread frame | GPU scene render |
+| --- | ---: | ---: |
+| Static | 8.36 ms | 6.32 ms |
+| Material WPO | 8.34 ms | 6.35 ms |
+| Rotating Movement Component | 11.70 ms | 6.66 ms |
+{: .rotation-table}
 
+The component trace recorded 400 `RotatingMovement` calls per measured frame. Together they took **3.67 ms per frame** in inclusive game-thread time. The game-thread and GPU columns measure work that can overlap.
 
+### WPO on and off in the same level
 
+I reran the WPO level with the same camera and material, toggling **Evaluate World Position Offset** on the 400 components. Nanite's **Evaluate WPO** visualization showed the fans green with evaluation enabled and red with it disabled. I turned the visualization off before timing.
+
+The median paired difference in GPU `SceneRender` was **+0.07 ms/frame** with WPO on. The four differences ranged from **−0.16 to +0.64 ms/frame**, so the whole-scene change was inconsistent. The combined `RenderVirtualShadowMaps` scopes were **about 0.11 ms/frame higher** with WPO on, with an increase in every pair.
+
+### Did the trace account for shadow-cache invalidation?
+
+Yes. The scene-render timing included Virtual Shadow Map work. `Shadow.Virtual.ProcessInvalidationsGPU` was about **0.001 ms/frame** in both states. That scope processes the invalidations. Rendering shadow pages again happens elsewhere. The shadow-rendering increase includes WPO geometry rendering as well as any additional work from reduced cache reuse. I didn't collect invalidated-page counts, so I can't quantify the cache-invalidation cost on its own. [Epic's Virtual Shadow Map profiling guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/virtual-shadow-maps-in-unreal-engine)
+
+### Trace setup
+
+- **Engine and hardware** — Unreal Engine 5.7.3, GeForce RTX 3080, realtime editor simulation.
+- **Trace channels** — `Cpu`, `Gpu`, `Frame`, and `Region`.
+- **Three-level comparison** — Three capture windows per variant. The table shows the median of the window medians. The CPU frame timer was `FEngineLoop::Tick` on `GameThread`. The GPU timer was `SceneRender` on `GPU0-Graphics0`.
+- **WPO on/off comparison** — Four paired 2.5-second windows, with 0.1 seconds trimmed from each end of every window. I took per-frame medians within each window and compared the window medians within each pair. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking the median.
+
+WPO was the cheaper way to spin these decorative fans. If the blades need collision that moves with them, that requirement changes which technique I'd use.
 
 /Andrei
