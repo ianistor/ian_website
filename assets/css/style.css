@@ -1032,6 +1032,11 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
   border-collapse: collapse;
 }
 
+.rotation-tick-delta {
+  color: #ff6b81;
+  white-space: nowrap;
+}
+
 .prose .rotation-table thead th {
   padding-block-end: 0.35em;
   border-block-end: 1px solid var(--line);
