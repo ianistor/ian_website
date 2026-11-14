@@ -32,16 +32,16 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 | Static | 8.33–8.45 | 6.27–6.54 |
 | Material WPO | 8.32–8.37 | 6.27–6.37 |
 | Rotating Movement | 11.64–12.09 | 6.65–6.73 |
-| Blueprint Tick (follow-up test) | 13.52–13.86 | 6.82–7.01 |
+| Blueprint Tick | 13.52–13.86 | 6.82–7.01 |
 {: .rotation-table}
 
-*Each range shows the lowest and highest median across three capture windows. Blueprint Tick comes from a follow-up test. See the [Blueprint Tick section](#blueprint-tick) for its side-by-side comparison with the component rerun.*
+*Each range shows the lowest and highest median across three capture windows. For the same-session Blueprint and component numbers, see [Blueprint Tick](#blueprint-tick).*
 
 I started with the fans doing absolutely nothing. Static and WPO landed in the same ballpark on the game thread. The native component was the one that stood out. It added **3.34 ms per frame** versus static in this test.
 
-Blueprint Tick took **13.80 ms/frame on the game thread** in the follow-up test. The native component came in at **11.65 ms/frame** in that same session.
+Blueprint Tick took **13.80 ms/frame on the game thread**. The native component came in at **11.65 ms/frame** in that same session.
 
-The GPU scene-render times were closer together. CPU and GPU work can overlap, so I read the two columns separately.
+Static and WPO were effectively tied. The middle GPU scene-render times were **6.32 ms with the static material** and **6.35 ms with WPO**. Those levels used different materials, and the component level also used movable meshes. To isolate the effect of enabling WPO, I toggled it on the same map and material below.
 
 ## Blueprint Tick {#blueprint-tick}
 
@@ -56,6 +56,10 @@ This is the one I'd reach for when the angle matters to gameplay. I wanted to se
 | Rotating Movement rerun | 11.65 ms | 3.24 ms | 6.61 ms |
 | Blueprint Tick | 13.80 ms | 5.24 ms | 6.92 ms |
 {: .rotation-table}
+
+![Unreal Insights in Game Frame mode showing 5.24 ms median and 5.47 ms average for the Blueprint actor timer]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Blueprint-Game-Frame.png' | relative_url }})
+
+*Game Frame mode shows **5.24 ms/frame median** (`I.Med`) and **5.47 ms/frame average** (`I.Avg`) across the selected Blueprint interval.*
 
 The Blueprint added **about 2.16 ms per frame on the game thread**. Both traces had 400 rotation calls per measured frame. The Blueprint actor tick includes the graph and the transform update, so the gap between those scopes doesn't tell me how much the Blueprint VM costs on its own.
 
