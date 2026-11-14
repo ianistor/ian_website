@@ -39,7 +39,7 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 
 I started with the fans doing absolutely nothing. Static and WPO landed in the same ballpark on the game thread. The native component was the one that stood out. It added **3.34 ms per frame** versus static in this test.
 
-Blueprint Tick took **13.80 ms/frame on the game thread**. The native component came in at **11.65 ms/frame** in that same session.
+Blueprint Tick took **13.80 ms/frame on the game thread**. Rotating Movement came in at **11.65 ms/frame** in the same session.
 
 Static and WPO were effectively tied. The middle GPU scene-render times were **6.32 ms with the static material** and **6.35 ms with WPO**. Those levels used different materials, and the component level also used movable meshes. To isolate the effect of enabling WPO, I toggled it on the same map and material below.
 
@@ -63,7 +63,7 @@ This is the one I'd reach for when the angle matters to gameplay. I wanted to se
 
 The Blueprint added **about 2.16 ms per frame on the game thread**. Both traces had 400 rotation calls per measured frame. The Blueprint actor tick includes the graph and the transform update, so the gap between those scopes doesn't tell me how much the Blueprint VM costs on its own.
 
-I tested the graph as shown above. It turns one degree per tick, while the component uses degrees per second. The blades were moving at different speeds, which matters when comparing the GPU numbers. The native component row here comes from this rerun.
+I tested the graph as shown above. It turns one degree per tick, while the component uses degrees per second. The blades were moving at different speeds, which matters when comparing the GPU numbers. 
 
 ## Rotating Movement Component {#rotating-movement-component}
 
@@ -85,7 +85,7 @@ This was the bit I wanted to poke at. WPO gets rid of the per-fan rotation tick,
 
 Shadow rendering took about **0.11 ms more per frame** with WPO on, and it went up in all four pairs. The whole-scene GPU result bounced around more.
 
-| GPU metric | What changed with WPO on |
+| GPU metric | What I measured |
 | --- | ---: |
 | Whole-scene `SceneRender` | +0.07 ms/frame median paired difference, with pair results from −0.16 to +0.64 ms |
 | `RenderVirtualShadowMaps` | About +0.11 ms/frame, higher in all four pairs |
@@ -97,13 +97,13 @@ Shadow rendering took about **0.11 ms more per frame** with WPO on, and it went 
 
 **WPO enabled — `WPO_On_01`**
 
-![Unreal Insights GPU Timers for WPO enabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-On-01-Timers.png' | relative_url }})
+![Unreal Insights GPU Timers for WPO enabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-On-01-Game-Frame.png' | relative_url }})
 
 **WPO disabled — `WPO_Off_02`**
 
-![Unreal Insights GPU Timers for WPO disabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02-Timers.png' | relative_url }})
+![Unreal Insights GPU Timers for WPO disabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02-Game-Frame.png' | relative_url }})
 
-*The screenshots show inclusive totals for the first pair. The two shadow-rendering rows together average 0.542 ms/frame with WPO on and 0.457 ms/frame with it off. The 0.11 ms result uses medians across all four pairs.*
+*Both screenshots use Game Frame mode. Add the two shadow-rendering values under `I.Avg` to read the first pair at a glance. They total about **0.54 ms/frame with WPO on** and **0.46 ms/frame with it off**. The **0.11 ms/frame** figure in the table comes from all four pairs.*
 
 </details>
 
@@ -122,7 +122,7 @@ I used **Unreal Engine 5.7.3** on a **GeForce RTX 3080** in realtime editor simu
 | WPO on/off | `WPO_On_01` and `WPO_Off_02` for the screenshot pair | `SceneRender`, `RenderVirtualShadowMaps`, and `Shadow.Virtual.ProcessInvalidationsGPU` on `GPU0-Graphics0` |
 {: .rotation-table}
 
-In Timing Insights, select a region and press **Enter** to aggregate timers over that interval. **Count** is the number of timer calls. **Incl** is total inclusive time in the selection. For example, each component-rotation frame contains 400 movement calls.
+In Timing Insights, select a region and press **Enter**. In the Timers panel, switch **Mode** to **Game Frame**. `I.Avg` is the inclusive average per game frame, and `I.Med` is the inclusive median. The GPU benchmark table uses exported timings from the graphics queue, while the screenshots group timer events by game frame.
 
 For the three-level comparison, I took a median for each capture window. The table shows the range of those medians. The **3.34 ms** game-thread difference uses the middle result for each variant. The original component capture's trimmed-window benchmark median for `RotatingMovement` was **3.67 ms/frame**. For the Blueprint and component rerun, I also took the middle result from three capture-window medians per method, trimming 0.1 seconds from both ends of each window. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
 
