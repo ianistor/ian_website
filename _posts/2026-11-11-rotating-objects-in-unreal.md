@@ -18,11 +18,11 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 
 ## Which one would I use?
 
-| Method | When I'd use it | Collision | Measured cost |
-| --- | --- | --- | --- |
-| [Blueprint Tick](#blueprint-tick) | A puzzle or trap that needs custom control over blade angle | Follows the transform when enabled. Test fast spins for missed contacts. | 5.24 ms/frame in Blueprint actor ticks for 400 fans |
-| [Rotating Movement Component](#rotating-movement-component) | Continuous rotation with a rate that gameplay can change | Follows the updated component. The rotation step doesn't sweep for hits. | 3.67 ms/frame in movement ticks (benchmark median) |
-| [Material WPO](#material-world-position-offset) | Decorative spin | Stays at the mesh's original pose | Close to static in the three-level test. About 0.11 ms/frame of additional VSM rendering in the controlled toggle test. |
+| Method | When I'd use it | Collision |
+| --- | --- | --- |
+| [Blueprint Tick](#blueprint-tick) | A puzzle or trap that needs custom control over blade angle | Follows the transform when enabled. Test fast spins for missed contacts. |
+| [Rotating Movement Component](#rotating-movement-component) | Continuous rotation with a rate that gameplay can change | Follows the updated component. The rotation step doesn't sweep for hits. |
+| [Material WPO](#material-world-position-offset) | Decorative spin | Stays at the mesh's original pose |
 {: .rotation-table .fan-method-guide}
 
 ## Okay, what happens with 400 of them?
@@ -36,9 +36,9 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 
 *Each range shows the lowest and highest median across three capture windows.*
 
-I started with the fans doing absolutely nothing. That gave me a baseline of **8.36 ms/frame on the game thread**. WPO came in at **8.34 ms**. I wouldn't read much into those two hundredths of a millisecond. The numbers moved around by more than that between captures.
+I started with the fans doing absolutely nothing. Static and WPO landed in the same ballpark on the game thread. The native component was the one that stood out. It added **3.34 ms per frame** versus static in this test.
 
-The native component was the one that stood out. The game thread went up to **11.70 ms/frame**, or **3.34 ms more than static**. The GPU scene-render times were closer together. CPU and GPU work overlap, so adding the two timings wouldn't give you the frame time.
+The GPU scene-render times were closer together. CPU and GPU work can overlap, so I read the two columns separately.
 
 ## Blueprint Tick {#blueprint-tick}
 
@@ -64,11 +64,9 @@ Enable **Rotation in Local Space** and set **Rotation Rate** around the shaft ax
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights, I switched Timers to **Game Frame** across the three component regions. The `RotatingMovement` row shows **3.66 ms/frame median** (`I.Med`) and **3.82 ms/frame average** (`I.Avg`).
+So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights, I switched Timers to **Game Frame**. The 400 movement ticks took about **3.7 ms per game frame** in the original component capture.
 
 ![Unreal Insights in Game Frame mode showing 3.66 ms median and 3.82 ms average for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Game-Frame.png' | relative_url }})
-
-*The trimmed-window benchmark median was 3.67 ms/frame.*
 
 ## Material World Position Offset {#material-world-position-offset}
 
@@ -78,7 +76,9 @@ I transform the shaft axis from local space to world space and normalize it befo
 
 This was the bit I wanted to poke at. WPO gets rid of the per-fan rotation tick, but what does it cost with Nanite and shadows? I went back to the same 400 fans and flipped **Evaluate World Position Offset** on the components. Same camera, same material. I checked both states in Nanite's **Evaluate WPO** view, then turned the visualization off before taking the trace.
 
-| GPU metric | WPO on minus off |
+Shadow rendering took about **0.11 ms more per frame** with WPO on, and it went up in all four pairs. The whole-scene GPU result bounced around more.
+
+| GPU metric | What changed with WPO on |
 | --- | ---: |
 | Whole-scene `SceneRender` | +0.07 ms/frame median paired difference, with pair results from −0.16 to +0.64 ms |
 | `RenderVirtualShadowMaps` | About +0.11 ms/frame, higher in all four pairs |
@@ -117,6 +117,6 @@ I used **Unreal Engine 5.7.3** on a **GeForce RTX 3080** in realtime editor simu
 
 In Timing Insights, select a region and press **Enter** to aggregate timers over that interval. **Count** is the number of timer calls. **Incl** is total inclusive time in the selection. For example, each component-rotation frame contains 400 movement calls.
 
-For the three-level comparison, I took a median for each capture window. The table shows the range of those medians, and the figures in the text use the middle one. For the Blueprint and component rerun, I also took the middle result from three capture-window medians per method, trimming 0.1 seconds from both ends of each window. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
+For the three-level comparison, I took a median for each capture window. The table shows the range of those medians. The **3.34 ms** game-thread difference uses the middle result for each variant. The original component capture's trimmed-window benchmark median for `RotatingMovement` was **3.67 ms/frame**. For the Blueprint and component rerun, I also took the middle result from three capture-window medians per method, trimming 0.1 seconds from both ends of each window. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
 
 /Andrei
