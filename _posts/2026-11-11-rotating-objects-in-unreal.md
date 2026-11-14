@@ -12,25 +12,9 @@ Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right
 
 I tried three ways to spin the same Megascans fan. Here’s how I set each one up and what it cost.
 
-## Performance Comparison between methods
-
-I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. Static and WPO used different materials, and the component level used movable meshes. For the WPO toggle, I used the same map and material and checked both states in Nanite’s **Evaluate WPO** view. I turned the visualization off for timing.
-
-| 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) | Rotation ticks (ms/game frame) |
-| --- | ---: | ---: | ---: |
-| Static | 8.36 | 6.32 | — |
-| Material WPO | 8.34 | 6.35 | — |
-| Rotating Movement Component | 11.65 | 6.61 | 3.24 |
-| Blueprint Tick | 13.80 | 6.92 | 5.24 |
-{: .rotation-table}
-
 <style>
 .fan-trace > summary {
   cursor: pointer;
-  list-style: none;
-}
-.fan-trace > summary::-webkit-details-marker {
-  display: none;
 }
 .fan-trace > summary .fan-trace-icon {
   display: inline-block;
@@ -106,5 +90,17 @@ For a decorative fan, this is where I'd start. Feed the normalized world-space s
 Both differences were within the variation across the three measurement windows. These are whole-scene timings from the static and WPO levels, which used different materials. In Insights, I used `FEngineLoop::Tick` on `GameThread` and `SceneRender` on `GPU0-Graphics0`.
 
 </details>
+
+## Performance Comparison between methods
+
+I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. Static and WPO used different materials, and the component level used movable meshes. For the WPO toggle, I used the same map and material and checked both states in Nanite’s **Evaluate WPO** view. I turned the visualization off for timing.
+
+| 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) | Rotation ticks (ms/game frame) |
+| --- | ---: | ---: | ---: |
+| Static | 8.36 | 6.32 | — |
+| Material WPO | 8.34 | 6.35 | — |
+| Rotating Movement Component | 11.65 | 6.61 | 3.24 |
+| Blueprint Tick | 13.80 | 6.92 | 5.24 |
+{: .rotation-table}
 
 /Andrei
