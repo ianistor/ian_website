@@ -47,11 +47,11 @@ Enable **Rotation in Local Space** and set **Rotation Rate** around the shaft ax
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. Here's what I saw in Insights. The **Incl** column shows **974.7 ms across 98,400 calls**. With 400 fans ticking per frame, that's **246 frames**, or **3.96 ms/frame on average** for the selection below.
+So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights, I switched Timers to **Game Frame** across the three component regions. The `RotatingMovement` row shows **3.66 ms/frame median** (`I.Med`) and **3.82 ms/frame average** (`I.Avg`).
 
-![Unreal Insights Timers showing 98,400 movement calls and 974.7 ms of inclusive CPU time]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Rotation.png' | relative_url }})
+![Unreal Insights in Game Frame mode showing 3.66 ms median and 3.82 ms average for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Game-Frame.png' | relative_url }})
 
-**Benchmark median: 3.67 ms/frame.** Screenshot selection: **3.96 ms/frame average**.
+*The chart's trimmed-window benchmark median was 3.67 ms/frame.*
 
 ## Material World Position Offset {#material-world-position-offset}
 
