@@ -27,20 +27,21 @@ I spun the same Megascans fan three ways in Unreal Engine, then tested each appr
 
 ## Which method should I use?
 
-- **[Blueprint Tick](#blueprint-tick)** when gameplay needs direct control over the blade angle.
-- **[Rotating Movement Component](#rotating-movement-component)** for continuous spin when gameplay mainly changes the speed.
+- **[Blueprint Tick](#blueprint-tick)** when gameplay needs direct control over the blade.
+- **[Rotating Movement Component](#rotating-movement-component)** for continuous spin when gameplay mainly changes the speed and axis.
 - **[World Position Offset (WPO)](#material-world-position-offset)** for decorative fans where accurate blade collision matters little. Around 10–20 visual-only fans is where I'd start profiling WPO against transform rotation. The benchmark below uses 400.
 
 ## What 400 fans cost
 
+For 1 fan either of these solutions work and probably you won't feel a dent in your performance, however when we add more the difference in costs is easier to be seen. So thats why i took 400 fans and profiled them.
 In this editor test, WPO’s game-thread time was close to static. Rotating Movement Component used less game-thread time than Blueprint Tick.
 
 | 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) |
 | --- | ---: | ---: |
 | Static | 8.36 | 6.32 |
 | Material WPO | 8.34 | 6.35 |
-| Rotating Movement Component | 11.65 | 6.61 |
-| Blueprint Tick | 13.80 <span class="rotation-tick-delta">(+2.00 ms in rotation ticks)</span> | 6.92 |
+| Rotating Movement Component | 11.65 <span class="rotation-tick-delta">(+3.31 ms vs static)</span> | 6.61 |
+| Blueprint Tick | 13.80 <span class="rotation-tick-delta">(+5.44 ms vs static)</span> | 6.92 |
 {: .rotation-table}
 
 The game-thread totals for Blueprint Tick and Rotating Movement Component differ by **2.15 ms/frame**. The red **+2.00 ms** compares only the measured rotation ticks.
