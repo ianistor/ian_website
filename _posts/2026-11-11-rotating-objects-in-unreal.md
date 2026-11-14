@@ -8,7 +8,7 @@ thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual
 excerpt: "Blueprint Tick, Rotating Movement Component, and World Position Offset compared for collision and performance with 400 Nanite fans."
 ---
 
-I spun the same Megascans fan three ways in Unreal Engine, then tested each approach with 400 fans. Here’s what I’d use when gameplay needs precise blade angles, when a fan just needs to change speed, and when a scene is full of decorative fans.
+Spinning a fan three ways in Unreal Engine, then tested each approach with 400 fans. Here’s what I’d use when gameplay needs precise blade angles, when a fan just needs to change speed, and when a scene is full of decorative fans.
 
 <style>
 .fan-trace > summary {
@@ -51,9 +51,8 @@ The game-thread totals for Blueprint Tick and Rotating Movement Component differ
 <details class="fan-trace" markdown="1">
 <summary>How I tested</summary>
 
-I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. Static and WPO used different materials, and the component level used movable meshes. For the WPO toggle, I used the same map and material and checked both states in Nanite’s **Evaluate WPO** view. I turned the visualization off for timing.
+I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. Static and WPO used different materials, and the component level used movable meshes.
 
-The static and WPO comparison uses three trimmed windows per method. The trace screenshots below show individual runs. I read inclusive medians from `I.Med` in Unreal Insights, using `FEngineLoop::Tick` on `GameThread` and `SceneRender` on `GPU0-Graphics0` for the whole-scene timings.
 
 </details>
 
