@@ -89,7 +89,17 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 | Rotating Movement | 11.64–12.09 | 6.65–6.73 |
 {: .rotation-table}
 
-Each range covers three capture-window medians. I traced Blueprint Tick and Rotating Movement again in the same session. The Blueprint turned one degree per tick and the component used degrees per second, so their rotation speeds differed.
+Each range covers three capture-window medians.
+
+I also traced Blueprint Tick and Rotating Movement in the same editor session with 400 fans each. These numbers are the middle of three capture-window medians.
+
+| Same-session comparison | Game thread (ms/frame) | Rotation ticks (ms/game frame) | GPU scene render (ms/frame) |
+| --- | ---: | ---: | ---: |
+| Blueprint Tick | 13.80 | 5.24 | 6.92 |
+| Rotating Movement | 11.65 | 3.24 | 6.61 |
+{: .rotation-table}
+
+The Blueprint turned one degree per tick and the component used degrees per second, so their rotation speeds differed.
 
 I recorded `Cpu`, `Gpu`, `Frame`, and `Region`. In Insights, the CPU screenshots use **Game Frame** mode and the `I.Med` column for `RotatingMovement` and `SM_wcljdev_tier_4_Blueprint_C`. The whole-game-thread result uses `FEngineLoop::Tick`. For WPO, I summed the two `RenderVirtualShadowMaps` scopes per frame on `GPU0-Graphics0` and took each window’s median, trimming 0.1 seconds from each end. The differences in the WPO table use unrounded values.
 
