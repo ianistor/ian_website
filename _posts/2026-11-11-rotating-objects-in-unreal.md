@@ -10,7 +10,7 @@ excerpt: "Three ways to spin, and what each means for collision and performance.
 
 Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right? Well… then you ask whether the blades should hit anything, whether the player can change the speed, and what happens if you put 400 of them in a level.
 
-I used a free Megascans fan to try three ways of doing it. For a decorative fan, I'd go with **World Position Offset (WPO)**. It stayed close to the static baseline in my test. If the collision has to spin too, I'd use **Rotating Movement** or **Blueprint Tick**, depending on how much control I need. I tried the Blueprint setup, but the timing comparison below covers the native component and WPO.
+I used a free Megascans fan to try three ways of doing it. For a decorative fan, I'd go with **World Position Offset (WPO)**. It stayed close to the static baseline in my test. If the collision has to spin too, I'd use **Rotating Movement** or **Blueprint Tick**, depending on how much control I need. I also traced Blueprint Tick against the native component. It was the slowest of the two on the game thread.
 
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
 
@@ -20,7 +20,7 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 
 | Method | When I'd use it | Collision | Measured cost |
 | --- | --- | --- | --- |
-| [Blueprint Tick](#blueprint-tick) | A puzzle or trap that needs custom control over blade angle | Follows the transform when enabled. Test fast spins for missed contacts. | Unmeasured |
+| [Blueprint Tick](#blueprint-tick) | A puzzle or trap that needs custom control over blade angle | Follows the transform when enabled. Test fast spins for missed contacts. | 5.24 ms/frame in Blueprint actor ticks for 400 fans |
 | [Rotating Movement Component](#rotating-movement-component) | Continuous rotation with a rate that gameplay can change | Follows the updated component. The rotation step doesn't sweep for hits. | 3.67 ms/frame in movement ticks (benchmark median) |
 | [Material WPO](#material-world-position-offset) | Decorative spin | Stays at the mesh's original pose | Close to static in the three-level test. About 0.11 ms/frame of additional VSM rendering in the controlled toggle test. |
 {: .rotation-table .fan-method-guide}
@@ -46,7 +46,17 @@ Connect **Event Tick** to **Add Actor Local Rotation**. The graph below applies 
 
 ![Blueprint Tick calling Add Actor Local Rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
 
-This is the one I'd reach for when the angle matters to gameplay. Every ticking fan runs the graph and updates a transform. I didn't trace this setup, so I don't have a number for what the Blueprint VM adds here.
+This is the one I'd reach for when the angle matters to gameplay. I wanted to see what the extra Blueprint work looked like at 400 fans, so I reran the native component and the Blueprint in the same editor session. Same mesh, camera and lighting.
+
+| 400 fans | Game-thread frame | Rotation CPU scope | GPU scene render |
+| --- | ---: | ---: | ---: |
+| Rotating Movement rerun | 11.65 ms | 3.24 ms | 6.61 ms |
+| Blueprint Tick | 13.80 ms | 5.24 ms | 6.92 ms |
+{: .rotation-table}
+
+The Blueprint added **about 2.16 ms per frame on the game thread**. Both traces had 400 rotation calls per measured frame. The Blueprint actor tick includes the graph and the transform update, so the gap between those scopes doesn't tell me how much the Blueprint VM costs on its own.
+
+I tested the graph as shown above. It turns one degree per tick, while the component uses degrees per second. The blades were moving at different speeds, which matters when comparing the GPU numbers. The native component row here comes from this rerun.
 
 ## Rotating Movement Component {#rotating-movement-component}
 
@@ -101,11 +111,12 @@ I used **Unreal Engine 5.7.3** on a **GeForce RTX 3080** in realtime editor simu
 | Static baseline | `FanBench_Static_R1` through `R3` | `FEngineLoop::Tick` on `GameThread`, `SceneRender` on `GPU0-Graphics0` |
 | Rotating Movement | `FanBench_Component_R1` through `R3` | Same frame timers, plus `RotatingMovement` on `GameThread` |
 | Material WPO | `FanBench_WPO_R1` through `R3` | Same frame timers |
+| Blueprint Tick rerun | `FanBench_BP_R1` through `R3` | `SM_wcljdev_tier_4_Blueprint_C` on `GameThread`, with `ReceiveTick` nested underneath |
 | WPO on/off | `WPO_On_01` and `WPO_Off_02` for the screenshot pair | `SceneRender`, `RenderVirtualShadowMaps`, and `Shadow.Virtual.ProcessInvalidationsGPU` on `GPU0-Graphics0` |
 {: .rotation-table}
 
 In Timing Insights, select a region and press **Enter** to aggregate timers over that interval. **Count** is the number of timer calls. **Incl** is total inclusive time in the selection. For example, each component-rotation frame contains 400 movement calls.
 
-For the three-level comparison, I took a median for each capture window. The table shows the range of those medians, and the figures in the text use the middle one. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
+For the three-level comparison, I took a median for each capture window. The table shows the range of those medians, and the figures in the text use the middle one. For the Blueprint and component rerun, I also took the middle result from three capture-window medians per method, trimming 0.1 seconds from both ends of each window. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
 
 /Andrei
