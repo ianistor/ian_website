@@ -51,7 +51,7 @@ So what am I actually saving by letting Unreal do the spin? The tick runs in C++
 
 ![Unreal Insights Timers showing 98,400 movement calls and 974.7 ms of inclusive CPU time]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Rotation.png' | relative_url }})
 
-*Benchmark result in the chart: 3.67 ms/frame. I calculated that by summing the movement calls in each frame, taking the median within each of three trimmed capture windows, then taking the middle result. The screenshot shows the total for one full window.*
+**Benchmark median: 3.67 ms/frame.** Screenshot selection: **3.96 ms/frame average**.
 
 ## Material World Position Offset {#material-world-position-offset}
 
@@ -73,11 +73,11 @@ This was the bit I wanted to poke at. WPO gets rid of the per-fan rotation tick,
 
 **WPO enabled — `WPO_On_01`**
 
-![Unreal Insights GPU Timers for WPO enabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-On-01.jpg' | relative_url }})
+![Unreal Insights GPU Timers for WPO enabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-On-01-Timers.png' | relative_url }})
 
 **WPO disabled — `WPO_Off_02`**
 
-![Unreal Insights GPU Timers for WPO disabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02.jpg' | relative_url }})
+![Unreal Insights GPU Timers for WPO disabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02-Timers.png' | relative_url }})
 
 *The screenshots show inclusive totals for the first pair. The two shadow-rendering rows together average 0.542 ms/frame with WPO on and 0.457 ms/frame with it off. The 0.11 ms result uses medians across all four pairs.*
 
