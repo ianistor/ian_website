@@ -67,9 +67,15 @@ For a decorative fan, this is where I'd start. Feed the normalized world-space s
 | Material WPO | 8.34 | 6.35 |
 {: .rotation-table}
 
-![Unreal Insights export showing game-thread and GPU scene-render medians for all static and WPO capture windows]({{ '/assets/images/blog/rotating-objects-in-unreal/Static-WPO-Trace-Export.png' | relative_url }})
+**Static — `FanBench_Static_R1`**
 
-*Timing export from Unreal Insights. The last two columns show median milliseconds per frame in each window.*
+![Unreal Insights showing 8.30 ms game thread and 6.32 ms GPU scene render for Static]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-static-R1.png' | relative_url }})
+
+**Material WPO — `FanBench_WPO_R1`**
+
+![Unreal Insights showing 8.42 ms game thread and 6.40 ms GPU scene render for WPO]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-wpo-R1.png' | relative_url }})
+
+*Read `I.Med` for median milliseconds. Each screenshot shows its full R1 window. The table above uses three trimmed windows per method.*
 
 Both differences were within the variation across the three measurement windows. These are whole-scene timings from the static and WPO levels, which used different materials. In Insights, I used `FEngineLoop::Tick` on `GameThread` and `SceneRender` on `GPU0-Graphics0`.
 
