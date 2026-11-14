@@ -8,7 +8,7 @@ thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual
 excerpt: "Three ways to spin, and what each means for collision and performance."
 ---
 
-Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right? Well… does it need to hit anything? Can the player change the speed? What happens if you put 400 of them in a level?
+Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right? Well… does it need to react when being hit or hitting something? Do we change the speed? And most importantly what is the peformance cost?
 
 I tried three ways to spin the same Megascans fan. Here’s how I set each one up and what it cost.
 
