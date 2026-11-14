@@ -10,7 +10,7 @@ excerpt: "Three ways to spin, and what each means for collision and performance.
 
 Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right? Well… then you ask whether the blades should hit anything, whether the player can change the speed, and what happens if you put 400 of them in a level.
 
-I used a free Megascans fan to try three ways of doing it. For a decorative fan, I'd go with **World Position Offset (WPO)**. It stayed close to the static baseline in my test. If the collision has to spin too, I'd use **Rotating Movement** or **Blueprint Tick**, depending on how much control I need. I also traced Blueprint Tick against the native component. It was the slowest of the two on the game thread.
+I used a free Megascans fan to try three ways of doing it. For a decorative fan, I'd go with **World Position Offset (WPO)**. It stayed close to the static baseline in my test. If the collision has to spin too, I'd use **Rotating Movement** or **Blueprint Tick**, depending on how much control I need. I also traced Blueprint Tick against the native component. With 400 fans, it added **about 2.16 ms per frame on the game thread** compared with the component in the same editor session.
 
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
 
@@ -32,11 +32,14 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 | Static | 8.33–8.45 | 6.27–6.54 |
 | Material WPO | 8.32–8.37 | 6.27–6.37 |
 | Rotating Movement | 11.64–12.09 | 6.65–6.73 |
+| Blueprint Tick (follow-up test) | 13.52–13.86 | 6.82–7.01 |
 {: .rotation-table}
 
-*Each range shows the lowest and highest median across three capture windows.*
+*Each range shows the lowest and highest median across three capture windows. Blueprint Tick comes from a follow-up test. See the [Blueprint Tick section](#blueprint-tick) for its side-by-side comparison with the component rerun.*
 
 I started with the fans doing absolutely nothing. Static and WPO landed in the same ballpark on the game thread. The native component was the one that stood out. It added **3.34 ms per frame** versus static in this test.
+
+Blueprint Tick took **13.80 ms/frame on the game thread** in the follow-up test. The native component came in at **11.65 ms/frame** in that same session.
 
 The GPU scene-render times were closer together. CPU and GPU work can overlap, so I read the two columns separately.
 
