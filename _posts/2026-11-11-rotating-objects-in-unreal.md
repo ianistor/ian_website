@@ -8,13 +8,15 @@ thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual
 excerpt: "Three ways to spin, and what each means for collision and performance."
 ---
 
-For decorative fans, I'd start with **material World Position Offset (WPO)**. In my 400-fan test, it stayed close to the static baseline. **Rotating Movement added 3.34 ms to the game-thread frame** versus static, and it can move collision with the blades. **Blueprint Tick** gives me direct control over the angle and gameplay logic. I tested its behavior, but I don't have a timing capture for it.
+Rotating a fan in Unreal sounds easy enough. You make it spin and move on, right? Well… then you ask whether the blades should hit anything, whether the player can change the speed, and what happens if you put 400 of them in a level.
+
+I used a free Megascans fan to try three ways of doing it. For a decorative fan, I'd go with **World Position Offset (WPO)**. It stayed close to the static baseline in my test. If the collision has to spin too, I'd use **Rotating Movement** or **Blueprint Tick**, depending on how much control I need. I tried the Blueprint setup, but the timing comparison below covers the native component and WPO.
 
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
 
 *Compare how the blades look with how their collision behaves.*
 
-## Choose by what the blades need to do
+## Which one would I use?
 
 | Method | When I'd use it | Collision | Measured cost |
 | --- | --- | --- | --- |
@@ -23,11 +25,13 @@ For decorative fans, I'd start with **material World Position Offset (WPO)**. In
 | [Material WPO](#material-world-position-offset) | Decorative spin | Stays at the mesh's original pose | Close to static in the three-level test. About 0.11 ms/frame of additional VSM rendering in the controlled toggle test. |
 {: .rotation-table .fan-method-guide}
 
-## What 400 fans cost
+## Okay, what happens with 400 of them?
 
 ![Game-thread and GPU scene-render times for static, WPO, and component rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/FanBench-Methods-Comparison.png' | relative_url }})
 
-The **static fans are the baseline**. Their game-thread time was **8.36 ms/frame**, versus **8.34 ms/frame** for WPO. That difference was within the variation across capture windows. Component rotation reached **11.70 ms/frame**. GPU scene rendering was **6.32 ms** for static, **6.35 ms** for WPO, and **6.66 ms** for component rotation. Game-thread and GPU work can overlap.
+I started with the fans doing absolutely nothing. That gave me a baseline of **8.36 ms/frame on the game thread**. WPO came in at **8.34 ms**. I wouldn't read much into those two hundredths of a millisecond. The numbers moved around by more than that between captures.
+
+The native component was the one that stood out. The game thread went up to **11.70 ms/frame**, or **3.34 ms more than static**. The GPU scene-render times were closer together. You can see them on the right of the chart. CPU and GPU work overlap, so adding the two bars wouldn't give you the frame time.
 
 ## Blueprint Tick {#blueprint-tick}
 
@@ -35,7 +39,7 @@ Connect **Event Tick** to **Add Actor Local Rotation**. The graph below applies 
 
 ![Blueprint Tick calling Add Actor Local Rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
 
-**Cost and evidence.** Each ticking actor runs the Blueprint graph and updates a transform. The screenshot shows the setup. The benchmark covered static, WPO, and native component rotation, so there is no measured Blueprint Tick cost to compare.
+This is the one I'd reach for when the angle matters to gameplay. Every ticking fan runs the graph and updates a transform. I didn't trace this setup, so I don't have a number for what the Blueprint VM adds here.
 
 ## Rotating Movement Component {#rotating-movement-component}
 
@@ -43,7 +47,7 @@ Enable **Rotation in Local Space** and set **Rotation Rate** around the shaft ax
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-**Cost and evidence.** The component runs its tick in C++ and updates the transform every frame. Insights recorded **400 `RotatingMovement` calls per measured frame**. Together they took **3.67 ms/frame** in inclusive game-thread time.
+So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights I could see **400 `RotatingMovement` calls every frame**. Those calls and the work they kicked off took **3.67 ms/frame** on the game thread.
 
 ![Unreal Insights Timers showing 98,400 movement calls and 974.7 ms of inclusive CPU time]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Rotation.png' | relative_url }})
 
@@ -55,7 +59,7 @@ I transform the shaft axis from local space to world space and normalize it befo
 
 ![Material graph with a normalized world-space axis feeding RotateAboutAxis]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png' | relative_url }})
 
-**Cost and evidence.** The material moves the rendered vertices without ticking a component for each fan. To measure the GPU change, I toggled **Evaluate World Position Offset** on the same 400 components with the camera and material fixed. Nanite's **Evaluate WPO** view confirmed both states. I turned the visualization off before timing.
+This was the bit I wanted to poke at. WPO gets rid of the per-fan rotation tick, but what does it cost with Nanite and shadows? I went back to the same 400 fans and flipped **Evaluate World Position Offset** on the components. Same camera, same material. I checked both states in Nanite's **Evaluate WPO** view, then turned the visualization off before taking the trace.
 
 | GPU metric | WPO on minus off |
 | --- | ---: |
@@ -79,7 +83,7 @@ I transform the shaft axis from local space to world space and normalize it befo
 
 </details>
 
-**How much was shadow-cache invalidation?** The scene timing includes Virtual Shadow Map work. The invalidation-processing scope measures marking invalidations. Redrawing pages happens during shadow rendering, which also includes drawing the WPO geometry. I didn't record invalidated-page counts, so the trace can't isolate how much of the shadow-rendering increase came from reduced cache reuse. [Epic's Virtual Shadow Map profiling guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/virtual-shadow-maps-in-unreal-engine)
+**What about the shadow cache?** I looked at the invalidation timer first. It was about a microsecond either way. The part that moved was shadow rendering, which is also where Unreal redraws pages it can no longer reuse. I didn't count invalidated pages in this test, so I can't say how much of that extra 0.11 ms came from the cache and how much came from drawing the animated geometry. [Epic's Virtual Shadow Map profiling guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/virtual-shadow-maps-in-unreal-engine)
 
 ## Trace setup and how to read it
 
