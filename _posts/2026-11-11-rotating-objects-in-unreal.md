@@ -27,11 +27,18 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 
 ## Okay, what happens with 400 of them?
 
-![Game-thread and GPU scene-render times for static, WPO, and component rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/FanBench-Methods-Comparison.png' | relative_url }})
+| 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) |
+| --- | ---: | ---: |
+| Static | 8.33–8.45 | 6.27–6.54 |
+| Material WPO | 8.32–8.37 | 6.27–6.37 |
+| Rotating Movement | 11.64–12.09 | 6.65–6.73 |
+{: .rotation-table}
+
+*Each range shows the lowest and highest median across three capture windows.*
 
 I started with the fans doing absolutely nothing. That gave me a baseline of **8.36 ms/frame on the game thread**. WPO came in at **8.34 ms**. I wouldn't read much into those two hundredths of a millisecond. The numbers moved around by more than that between captures.
 
-The native component was the one that stood out. The game thread went up to **11.70 ms/frame**, or **3.34 ms more than static**. The GPU scene-render times were closer together. You can see them on the right of the chart. CPU and GPU work overlap, so adding the two bars wouldn't give you the frame time.
+The native component was the one that stood out. The game thread went up to **11.70 ms/frame**, or **3.34 ms more than static**. The GPU scene-render times were closer together. CPU and GPU work overlap, so adding the two timings wouldn't give you the frame time.
 
 ## Blueprint Tick {#blueprint-tick}
 
@@ -51,7 +58,7 @@ So what am I actually saving by letting Unreal do the spin? The tick runs in C++
 
 ![Unreal Insights in Game Frame mode showing 3.66 ms median and 3.82 ms average for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Game-Frame.png' | relative_url }})
 
-*The chart's trimmed-window benchmark median was 3.67 ms/frame.*
+*The trimmed-window benchmark median was 3.67 ms/frame.*
 
 ## Material World Position Offset {#material-world-position-offset}
 
@@ -99,6 +106,6 @@ I used **Unreal Engine 5.7.3** on a **GeForce RTX 3080** in realtime editor simu
 
 In Timing Insights, select a region and press **Enter** to aggregate timers over that interval. **Count** is the number of timer calls. **Incl** is total inclusive time in the selection. For example, each component-rotation frame contains 400 movement calls.
 
-The three-level chart uses the median of three capture-window medians per variant. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
+For the three-level comparison, I took a median for each capture window. The table shows the range of those medians, and the figures in the text use the middle one. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
 
 /Andrei
