@@ -21,7 +21,7 @@ I used a free Megascans fan to try three ways of doing it. For a decorative fan,
 | Method | When I'd use it | Collision | Measured cost |
 | --- | --- | --- | --- |
 | [Blueprint Tick](#blueprint-tick) | A puzzle or trap that needs custom control over blade angle | Follows the transform when enabled. Test fast spins for missed contacts. | Unmeasured |
-| [Rotating Movement Component](#rotating-movement-component) | Continuous rotation with a rate that gameplay can change | Follows the updated component. The rotation step doesn't sweep for hits. | 3.67 ms/frame in movement ticks for 400 fans |
+| [Rotating Movement Component](#rotating-movement-component) | Continuous rotation with a rate that gameplay can change | Follows the updated component. The rotation step doesn't sweep for hits. | 3.67 ms/frame in movement ticks (benchmark median) |
 | [Material WPO](#material-world-position-offset) | Decorative spin | Stays at the mesh's original pose | Close to static in the three-level test. About 0.11 ms/frame of additional VSM rendering in the controlled toggle test. |
 {: .rotation-table .fan-method-guide}
 
@@ -47,11 +47,11 @@ Enable **Rotation in Local Space** and set **Rotation Rate** around the shaft ax
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights I could see **400 `RotatingMovement` calls every frame**. Those calls and the work they kicked off took **3.67 ms/frame** on the game thread.
+So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. Here's what I saw in Insights. The **Incl** column shows **974.7 ms across 98,400 calls**. With 400 fans ticking per frame, that's **246 frames**, or **3.96 ms/frame on average** for the selection below.
 
 ![Unreal Insights Timers showing 98,400 movement calls and 974.7 ms of inclusive CPU time]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Rotation.png' | relative_url }})
 
-*The screenshot shows a full 246-frame selection. Its 974.7 ms total works out to 3.96 ms/frame on average. The benchmark figure uses the median of three trimmed capture-window medians.*
+*Benchmark result in the chart: 3.67 ms/frame. I calculated that by summing the movement calls in each frame, taking the median within each of three trimmed capture windows, then taking the middle result. The screenshot shows the total for one full window.*
 
 ## Material World Position Offset {#material-world-position-offset}
 
