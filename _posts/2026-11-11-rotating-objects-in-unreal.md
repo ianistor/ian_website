@@ -81,27 +81,7 @@ Both differences were within the variation across the three measurement windows.
 
 </details>
 
-<details markdown="1">
-<summary>WPO on/off shadow test</summary>
-
-![GPU graphics timeline with the WPO-off region selected and shadow-rendering timer totals]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02.jpg' | relative_url }})
-
-*Insights shows totals for the selected interval. The table uses per-frame timings exported from the graphics queue.*
-
-| WPO on / off regions | WPO on (ms/frame) | WPO off (ms/frame) | Extra with WPO (ms/frame) |
-| --- | ---: | ---: | ---: |
-| `WPO_On_01` / `WPO_Off_02` | 0.523 | 0.422 | +0.101 |
-| `WPO_On_04` / `WPO_Off_03` | 0.526 | 0.419 | +0.108 |
-| `WPO_On_05` / `WPO_Off_06` | 0.533 | 0.418 | +0.115 |
-| `WPO_On_08` / `WPO_Off_07` | 0.528 | 0.418 | +0.110 |
-{: .rotation-table}
-
-The whole-scene GPU difference ranged from **−0.16 to +0.64 ms/frame**. The GPU invalidation-processing timer was about **0.001 ms/frame** in both states. Shadow rendering includes drawing the animated geometry and redrawing pages Unreal can’t reuse. I didn’t count invalidated pages, so I can’t say how much each contributed. [Epic’s Virtual Shadow Map profiling guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/virtual-shadow-maps-in-unreal-engine)
-
-</details>
-
-<details markdown="1">
-<summary>400-fan benchmark setup and timings</summary>
+## Performance Comparison between methods
 
 I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. Static and WPO used different materials, and the component level used movable meshes. For the WPO toggle, I used the same map and material and checked both states in Nanite’s **Evaluate WPO** view. I turned the visualization off for timing.
 
@@ -113,10 +93,6 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 | Blueprint Tick | 13.80 | 6.92 | 5.24 |
 {: .rotation-table}
 
-I took the middle of three window medians for each result. Blueprint Tick turned one degree per tick. The Rotating Movement Component used degrees per second, so their rotation speeds differed.
 
-I recorded `Cpu`, `Gpu`, `Frame`, and `Region`. In Insights, the CPU screenshots use **Game Frame** mode and the `I.Med` column for `RotatingMovement` and `SM_wcljdev_tier_4_Blueprint_C`. The whole-game-thread result uses `FEngineLoop::Tick`. For WPO, I summed the two `RenderVirtualShadowMaps` scopes per frame on `GPU0-Graphics0` and took each window’s median, trimming 0.1 seconds from each end. The differences in the WPO table use unrounded values.
-
-</details>
 
 /Andrei
