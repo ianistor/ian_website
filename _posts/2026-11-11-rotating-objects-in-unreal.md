@@ -110,7 +110,7 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 
 **Collision.** It stays at the original pose while the rendered blades spin.
 
-**Cost.** There’s no per-fan rotation tick. The game-thread timings stayed close to static in my test.
+**Cost.** There’s no per-fan rotation tick. The game-thread timings stayed close to static in my test and the rotation is added to the GPU instead. This is usually expensive to use WPO for Nanite meshes however in this test we can see its not the case.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
