@@ -8,7 +8,7 @@ thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual
 excerpt: "Blueprint Tick, Rotating Movement Component, and World Position Offset compared for collision and performance with 400 Nanite fans."
 ---
 
-Spinning a fan three ways in Unreal Engine, then tested each approach with 400 fans. Here’s what I’d use when gameplay needs precise blade angles, when a fan just needs to change speed, and when a scene is full of decorative fans.
+Going over ways to spin objects in Unreal, their pros and cons and some profiling data.
 
 <style>
 .fan-trace > summary {
