@@ -1033,8 +1033,9 @@ body.home-with-bg-video.video-bg-ready .site-bg-video-overlay {
 }
 
 .rotation-tick-delta {
+  display: block;
   color: #ff6b81;
-  white-space: nowrap;
+  font-size: 0.85em;
 }
 
 .prose .rotation-table thead th {
