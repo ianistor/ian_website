@@ -37,6 +37,9 @@ layout: default
     <div class="project-hero-top">
       <p class="eyebrow">Blog</p>
       <h1>{{ page.title }}</h1>
+      {% if page.excerpt %}
+        <p class="post-hero-excerpt">{{ page.excerpt | strip_html | normalize_whitespace | escape }}</p>
+      {% endif %}
       <p class="meta">{{ page.date | date: "%B %-d, %Y" }}{% if page.tags %} · {{ page.tags | join: ', ' }}{% endif %}</p>
     </div>
   </header>
@@ -60,6 +63,10 @@ layout: default
     </aside>
 
     <div class="project-main-content">
+      <details class="post-mobile-toc" hidden>
+        <summary>On this page</summary>
+        <ul class="toc-list"></ul>
+      </details>
       <div class="prose">
         {{ content }}
       </div>
@@ -73,7 +80,7 @@ layout: default
         {% include post-share.html %}
       {% endif %}
       <div class="project-fact">
-        <h3 id="post-toc-heading">Table of contents</h3>
+        <h3 id="post-toc-heading">On this page</h3>
         <ul class="toc-list" id="page-toc"></ul>
       </div>
     </aside>
@@ -84,6 +91,7 @@ layout: default
   (() => {
     const tocRoot = document.querySelector('#page-toc');
     const contentRoot = document.querySelector('.project-main-content');
+    const mobileToc = document.querySelector('.post-mobile-toc');
 
     if (tocRoot && contentRoot) {
       const headings = [...contentRoot.querySelectorAll('h2, h3')];
@@ -102,6 +110,11 @@ layout: default
 
       if (headings.length === 0) {
         tocRoot.innerHTML = '<li class="toc-empty">No sections yet.</li>';
+      } else {
+        mobileToc.querySelector('.toc-list').replaceChildren(
+          ...Array.from(tocRoot.children, (item) => item.cloneNode(true))
+        );
+        mobileToc.hidden = false;
       }
 
       const pageScroll = document.querySelector('.page-scroll');
@@ -110,8 +123,8 @@ layout: default
       const headerGap = parseFloat(rootStyles.getPropertyValue('--header-gap')) || 0;
       const anchorOffset = headerZoneHeight + headerGap + 12;
 
-      tocRoot.addEventListener('click', (event) => {
-        const link = event.target.closest('a[href^="#"]');
+      document.querySelector('.post-page').addEventListener('click', (event) => {
+        const link = event.target.closest('.toc-list a[href^="#"], .fan-method-guide a[href^="#"]');
         if (!link) return;
 
         const targetId = link.getAttribute('href').slice(1);
@@ -119,6 +132,7 @@ layout: default
         if (!target) return;
 
         event.preventDefault();
+        if (mobileToc.contains(link)) mobileToc.open = false;
 
         const targetTop = target.getBoundingClientRect().top + (pageScroll ? pageScroll.scrollTop : window.scrollY) - anchorOffset;
 

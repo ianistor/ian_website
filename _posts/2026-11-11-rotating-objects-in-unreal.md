@@ -10,7 +10,17 @@ excerpt: "Three ways to spin, and what each means for collision and performance.
 
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
 
-*Ignore the transform typo please*
+*Compare how the blades look with how their collision behaves.*
+
+## Which method should I use?
+
+| Use case | What I'd use |
+| --- | --- |
+| A gameplay puzzle that needs precise control over the blade angle | [Blueprint Tick](#blueprint-tick) |
+| A ventilation fan that ramps up when the player flips a switch | [Rotating Movement Component](#rotating-movement-component), with a Timeline to change the rate |
+| A spinning trap that must register contact as the blade passes through a player | [Blueprint Tick](#blueprint-tick) or [Rotating Movement Component](#rotating-movement-component) to move the collision with the blades. Test fast spins for missed contacts. |
+| More than roughly 10–20 fans, or a fan whose blade collision isn't important | [World Position Offset](#material-world-position-offset) when the spin can be visual-only. |
+{: .rotation-table .fan-method-guide}
 
 ## Context
 
@@ -20,7 +30,7 @@ I used a free Megascans fan to try three approaches: Blueprint Tick, Unreal's bu
 
 `I'm human, and this post is based on what I know as of November 11, 2026.`
 
-## Blueprint Tick
+## Blueprint Tick {#blueprint-tick}
 
 The quick version is to connect Event Tick to Add Actor Local Rotation. The graph below applies one degree per frame. For a steady speed across frame rates, multiply your rate in degrees per second by Delta Seconds before passing it into the rotation node.
 
@@ -36,7 +46,7 @@ For a fan with a stationary housing, put the blades on their own mesh component 
 | **Cons** | ⚠️ Each ticking actor runs the graph and updates a transform every frame. |
 {: .rotation-table .rotation-method-table}
 
-## Rotating Movement Component
+## Rotating Movement Component {#rotating-movement-component}
 
 Add a Rotating Movement Component, enable **Rotation in Local Space**, and set **Rotation Rate** on the axis that runs through the shaft. If the housing and blades are separate components, use **Set Updated Component** to target the blades. The component handles the spin, and you can change its rate at runtime. Drive the rate with a Timeline if you want the fan to wind down after the power goes out.
 
@@ -56,9 +66,11 @@ So what am I actually saving by using the Rotating Movement Component? With Blue
 
 For one fan and a couple of nodes, I doubt any performance spikes will be seen, however the situation is a bit different if we have a warehouse full of them or plenty of them on screen.
 
-## Material World Position Offset
+## Material World Position Offset {#material-world-position-offset}
 
 I used WPO for a lot of cheap tricks in the past, and I miss that in my day-to-day work. With Nanite in the pipeline, I pay closer attention to what that shader work costs.
+
+I'd use WPO for decorative fans when the blades don't need accurate collision, and it's the first option I'd profile once a scene has more than roughly 10–20 fans and the spin can be visual-only. That's my rule of thumb. I'd compare it with transform rotation at the fan count I expect to ship, especially with Nanite enabled.
 
 This time the material moves the vertices. In the graph below, I transform the fan's local shaft axis to world space, normalize it, and pass it into **RotateAboutAxis**. I use the blade mesh's pivot at the hub and drive the angle with **Time × Speed**. The function gives me the displacement to plug into **World Position Offset**. If the highlights look wrong as the blades turn, check the shading normals too.
 
@@ -69,21 +81,12 @@ This time the material moves the vertices. In the graph below, I transform the f
 | **Visual&nbsp;Updates** | ✅ The rendered blades rotate around the material pivot. |
 | **Collisions** | ⚠️ Collision stays at the mesh's original pose while the rendered blades spin. |
 | **Pros** | ✅ The animation runs without a per-fan Blueprint Tick or transform update. |
-| **Cons** | ⚠️ **Avoid WPO on Nanite meshes when possible.** If you need it, profile GPU cost at your expected instance count and check that the displacement bounds cover the whole spin. |
+| **Cons** | ⚠️ With Nanite, profile GPU cost at your expected instance count and check that the displacement bounds cover the whole spin. |
 {: .rotation-table .rotation-method-table}
 
 ## Conclusions
 
-| Use case | What to use |
-| --- | --- |
-| A gameplay fan puzzle | **Blueprint Tick** gives you direct control over the angle,limits,speed and axis in realtime |
-| A ventilation fan that ramps up when the player flips a switch | **Rotating Movement Component** handles the spin while a Timeline changes its rate. |
-| A spinning trap that must register hits as the blade passes through a player |**Blueprint Tick or Component**  |
-| Rooftop fans that players only see from a distance | **WPO** is an option for visual-only spin. For Nanite meshes I'd start with transform rotation and measure at the fan count I expect to ship. |
-
 **Funny enough testing performances in traces shows WPO is still the clear winner performance wise, even if Nanite is on. (will share more data analysis soon)**
-
-{: .rotation-table}
 
 
 
