@@ -71,7 +71,7 @@ Enable **Rotation in Local Space** and set **Rotation Rate** around the shaft ax
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights, I switched Timers to **Game Frame**. The 400 movement ticks took about **3.7 ms per game frame** in the original component capture.
+So what am I actually saving by letting Unreal do the spin? The tick runs in C++, but it still has to move the component. In Insights, I switched Timers to **Game Frame**. The `RotatingMovement` row below shows **3.66 ms median** and **3.82 ms average** per game frame.
 
 ![Unreal Insights in Game Frame mode showing 3.66 ms median and 3.82 ms average for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Game-Frame.png' | relative_url }})
 
@@ -103,7 +103,7 @@ Shadow rendering took about **0.11 ms more per frame** with WPO on, and it went 
 
 ![Unreal Insights GPU Timers for WPO disabled in the first test pair]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-WPO-Off-02-Game-Frame.png' | relative_url }})
 
-*Both screenshots use Game Frame mode. Add the two shadow-rendering values under `I.Avg` to read the first pair at a glance. They total about **0.54 ms/frame with WPO on** and **0.46 ms/frame with it off**. The **0.11 ms/frame** figure in the table comes from all four pairs.*
+*Read the two `RenderVirtualShadowMaps` rows under `I.Avg`. WPO on shows **0.47 + 0.07 ms** per game frame. WPO off shows **0.38 + 0.08 ms**. These screenshots show one pair. The results table above uses exports from all four pairs.*
 
 </details>
 
@@ -122,7 +122,7 @@ I used **Unreal Engine 5.7.3** on a **GeForce RTX 3080** in realtime editor simu
 | WPO on/off | `WPO_On_01` and `WPO_Off_02` for the screenshot pair | `SceneRender`, `RenderVirtualShadowMaps`, and `Shadow.Virtual.ProcessInvalidationsGPU` on `GPU0-Graphics0` |
 {: .rotation-table}
 
-In Timing Insights, select a region and press **Enter**. In the Timers panel, switch **Mode** to **Game Frame**. `I.Avg` is the inclusive average per game frame, and `I.Med` is the inclusive median. The GPU benchmark table uses exported timings from the graphics queue, while the screenshots group timer events by game frame.
+In Timing Insights, select a region and press **Enter**. In the Timers panel, switch **Mode** to **Game Frame**. `I.Avg` is the inclusive average per game frame, and `I.Med` is the inclusive median. The GPU benchmark table uses exported timings from `GPU0-Graphics0`. Game Frame mode groups GPU events by CPU game-frame boundaries, so the `SceneRender` row in the screenshots uses a different aggregation.
 
 For the three-level comparison, I took a median for each capture window. The table shows the range of those medians. The **3.34 ms** game-thread difference uses the middle result for each variant. The original component capture's trimmed-window benchmark median for `RotatingMovement` was **3.67 ms/frame**. For the Blueprint and component rerun, I also took the middle result from three capture-window medians per method, trimming 0.1 seconds from both ends of each window. The WPO toggle uses four paired 2.5-second windows, trimmed by 0.1 seconds at each end. For shadow rendering, I summed the `RenderVirtualShadowMaps` scopes per frame before taking each window's median.
 
