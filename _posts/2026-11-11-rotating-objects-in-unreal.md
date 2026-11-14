@@ -32,7 +32,7 @@ For a fan with a stationary housing, put the blades on their own mesh component 
 | --- | --- |
 | **Visual&nbsp;Updates** | ✅ The graph controls the rotation applied on each tick. |
 | **Collisions** | ✅ Enabled collision follows the transform. ⚠️ The rotation can skip contacts between frames. |
-| **Pros** | ✅ You can calculate the angle yourself and clamp it, steer toward a target, or stop at a specific orientation. |
+| **Pros** | ✅ You can do any sort of crazy or bespoke logic of the rotation you need |
 | **Cons** | ⚠️ Each ticking actor runs the graph and updates a transform every frame. |
 {: .rotation-table .rotation-method-table}
 
@@ -47,7 +47,7 @@ Add a Rotating Movement Component, enable **Rotation in Local Space**, and set *
 | **Visual&nbsp;Updates** | ✅ The assigned component rotates at the rate you set. |
 | **Collisions** | ✅ Enabled collision follows the updated component. ⚠️ The rotation step applies without sweeping for hits along the way. |
 | **Pros** | ✅ Unreal handles continuous rotation. Blueprint can change the rate whenever gameplay needs it. |
-| **Cons** | ⚠️ The component still ticks and updates a transform every frame. |
+| **Cons** | ⚠️ The component still ticks and updates a transform every frame, however it skips the BP VM. |
 {: .rotation-table .rotation-method-table}
 
 ### Blueprint Tick vs. Rotating Movement performance
