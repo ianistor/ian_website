@@ -34,26 +34,24 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 ## What 400 fans cost
 
 For 1 fan either of these solutions work and probably you won't feel a dent in your performance, however when we add more the difference in costs is easier to be seen. So thats why i took 400 fans and profiled them.
-In this editor test, WPO’s game-thread time was close to static. Rotating Movement Component used less game-thread time than Blueprint Tick.
+WPO and static measured **8.33** and **8.31 ms/frame** on the game thread, respectively.
 
 | 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) |
 | --- | ---: | ---: |
-| Static(our baseline) | 8.36 | 6.32 |
-| Material WPO | 8.34 | 6.35 |
-| Rotating Movement Component | 11.65 <span class="rotation-tick-delta">(+3.31 ms vs static)</span> | 6.61 |
-| Blueprint Tick | 13.80 <span class="rotation-tick-delta">(+5.44 ms vs static)</span> | 6.92 |
+| Static(our baseline) | 8.31 | 7.61 |
+| Material WPO | 8.33 | 7.69 |
+| Rotating Movement Component | 13.43 <span class="rotation-tick-delta">(+5.13 ms vs static)</span> | 10.89 |
+| Blueprint Tick | 13.84 <span class="rotation-tick-delta">(+5.53 ms vs static)</span> | 10.47 |
 {: .rotation-table}
 
-The game-thread totals for Blueprint Tick and Rotating Movement Component differ by **2.15 ms/frame**. The red **+2.00 ms** compares only the measured rotation ticks.
+The Blueprint Tick and Rotating Movement Component totals differed by **0.41 ms/frame** on the game thread. Their measured rotation scopes differed by **1.89 ms/frame**. The component's game-thread window medians ranged from **11.89 to 24.57 ms/frame**, so the difference in total game-thread time is sensitive to the capture window.
 
-**Updated WPO trace (UE 5.8.4).** I reran the 400-fan WPO level on the RTX 3080 after updating the material to rotate its world-space normals. Across three 3-second windows, the median of the window medians was **8.75 ms/frame** on the game thread and **7.75 ms/frame** for GPU scene rendering. The window medians ranged from 8.35 to 9.85 ms and 7.56 to 8.80 ms, respectively. This run used a separate editor process while the working editor remained open. The table uses UE 5.7.3, so these timings can't isolate the cost of the material edit.
-
-**WPO on vs. off in the same map.** Enabling WPO increased Virtual Shadow Map rendering by about **0.11 ms/frame**. The whole-scene GPU difference varied more across runs.
+**WPO on vs. off in the same map.** Enabling WPO raised the GPU `ShadowDepths` timer by about **0.15 ms/frame** across four paired windows. The paired median change in total GPU frame time was **+0.01 ms/frame**.
 
 <details class="fan-trace" markdown="1">
 <summary>How I tested</summary>
 
-I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. Static and WPO used different materials, and the component level used movable meshes.
+I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. The table reports the median of three 3-second window medians per method, with 100 ms trimmed at each end. I ran the captures in a separate editor process while the working editor stayed open. Static and WPO used different materials. The transform-driven levels used movable meshes. The WPO material used world-space normals and a 900 cm displacement override.
 
 
 </details>
@@ -70,10 +68,10 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 
 **Collision.** It follows the transform when enabled. For a fast trap, check whether the blade skips contacts between frames.
 
-**Cost.** With 400 fans, the Blueprint actor ticks took a median **5.24 ms per game frame**, including the transform updates.
+**Cost.** With 400 fans, the Blueprint actor ticks took a median **5.60 ms per game frame**, including the transform updates.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View the original UE 5.7.3 trace screenshot</summary>
 
 ![Insights Game Frame mode showing a 5.24 ms inclusive median for the Blueprint actor tick]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Blueprint-Game-Frame.png' | relative_url }})
 
@@ -91,10 +89,10 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 
 **Collision.** It follows the updated component. The rotation step doesn’t sweep for hits.
 
-**Cost.** The component runs in C++, and it still has to update the transform each frame. The 400 movement ticks took a median **3.24 ms per game frame**. In the same editor session, the whole game thread took **11.65 ms/frame** with the component and **13.80 ms/frame** with Blueprint Tick.
+**Cost.** The component runs in C++, and it still has to update the transform each frame. The 400 movement ticks took a median **3.71 ms per game frame**. The whole game thread measured **13.43 ms/frame** with the component and **13.84 ms/frame** with Blueprint Tick.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View the original UE 5.7.3 trace screenshot</summary>
 
 ![Insights Game Frame mode showing a 3.24 ms inclusive median for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Matched-Game-Frame.png' | relative_url }})
 
@@ -112,10 +110,10 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 
 **Collision.** It stays at the original pose while the rendered blades spin.
 
-**Cost.** There’s no per-fan rotation tick. The game-thread timings stayed close to static in my test and the rotation is added to the GPU instead. This is usually expensive to use WPO for Nanite meshes however in this test we can see its not the case.
+**Cost.** There’s no per-fan rotation tick. In this test, the WPO scene measured **7.69 ms/frame** of GPU scene rendering, compared with **7.61 ms/frame** for the static scene.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View the original UE 5.7.3 trace screenshot</summary>
 
 **Static — `FanBench_Static_R1`**
 
@@ -125,9 +123,7 @@ I used **Unreal Engine 5.7.3** on an **RTX 3080** in realtime editor simulation.
 
 ![Unreal Insights showing 8.42 ms game thread and 6.40 ms GPU scene render for WPO]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-wpo-R1.png' | relative_url }})
 
-*Read `I.Med` for median milliseconds. Each screenshot shows its full R1 window. The main benchmark table uses three trimmed windows per method.*
-
-The static-to-WPO differences were within the variation across the three measurement windows. These whole-scene timings come from levels that used different materials.
+*Read `I.Med` for median milliseconds in these UE 5.7.3 screenshots. Each screenshot shows its full R1 window.*
 
 </details>
 
