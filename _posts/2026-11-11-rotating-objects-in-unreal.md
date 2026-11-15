@@ -5,10 +5,10 @@ date: 2026-11-11
 tags: [unreal, workflow]
 image: "/assets/images/blog/rotating-objects-in-unreal/fan-collision-and-visual.jpg"
 thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4"
-excerpt: "Blueprint Tick, Rotating Movement Component, and World Position Offset compared for collision and performance with 400 Nanite fans."
+excerpt: "Blueprint Tick, Rotating Movement Component, and World Position Offset compared"
 ---
 
-Going over ways to spin objects in Unreal, their pros and cons and some profiling data.
+Going over ways to spin objects in Unreal, their pros and cons and some profiling data between Blueprint tick transform, rotating component on actor and WPO rotation.
 
 <style>
 .fan-trace > summary {
