@@ -33,18 +33,18 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 
 ## Blueprint Tick {#blueprint-tick}
 
-**When I’d use it.** When the blade collision accuracy matters or where i want to update the behavior in realtime based on hit/damage/quest logic.
+**I would use this method** when the blade collision accuracy matters or where i want to update the behavior in realtime based on hit/damage/quest logic.
 
 **Setup.** Connect **Event Tick** to **Add Actor Local Rotation**. The graph below turns one degree per tick. For a steady speed, multiply degrees per second by **Delta Seconds** instead. If the housing stays still, rotate a separate blade component with its pivot at the hub.
 
 ![Blueprint Tick connected to Add Actor Local Rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
 
 
-**Collision.** It follows the transform when enabled. For a fast trap, check whether the blade skips contacts between frames.
+**Collision.** It follows the transform. For a fast moving "trap" you might want to check whether the blade skips contacts between frames.
 
 ## Rotating Movement Component {#rotating-movement-component}
 
-**When I’d use it.** When the fan keeps spinning and maybe when gameplay needs to changes the speed or simple on/off
+**I would use this method ** when the fan keeps spinning and maybe when gameplay needs to changes the speed or simple on/off
 
 **Setup.** Add a **Rotating Movement Component**, enable **Rotation in Local Space**, and set **Rotation Rate** around the shaft axis. Use **Set Updated Component** if the blades have their own component. A Timeline can wind the fan down when the power goes out.
 
@@ -54,7 +54,7 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 
 ## Material World Position Offset {#material-world-position-offset}
 
-**When I’d use it.** For decorative fans that can spin visually or when I can get away with non accurate collision hits.
+**This is my favorite method and I would use it** for decorative fans that need to spin visually or when I can get away with non accurate collision hits.
 
 **Setup.** Feed the normalized world-space shaft axis and the hub pivot into **RotateAboutAxis**. Drive the angle with **Time × Speed** and plug the result into **World Position Offset (WPO)**. WPO rotates the vertices only, so rotate the normals by the same axis and angle to keep lighting aligned with the blades. Connect the world-space normal output to **Normal** and disable **Tangent Space Normal** on the material.
 
