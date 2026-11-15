@@ -99,9 +99,9 @@ Across the three trimmed windows, the Blueprint actor ticks for 400 fans took a 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
-![UE 5.8.4 Unreal Insights, Blueprint Tick R2 at 5.577 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-BP.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, Blueprint Tick at 5.577 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-BP.png' | relative_url }})
 
-*Full R2 window. The Blueprint actor tick measured **5.577 ms per game frame** in `I.Med`.*
+*Full capture window. The Blueprint actor tick measured **5.577 ms per game frame** in `I.Med`.*
 
 </details>
 
@@ -112,32 +112,32 @@ The component runs in C++, and it still has to update the transform each frame. 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
-![UE 5.8.4 Unreal Insights, Rotating Movement R2 at 3.700 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Component.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, Rotating Movement at 3.700 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Component.png' | relative_url }})
 
-*Full R2 window. Rotating Movement measured **3.700 ms per game frame** in `I.Med`.*
+*Full capture window. Rotating Movement measured **3.700 ms per game frame** in `I.Med`.*
 
 </details>
 
 ### Material WPO timings
 
-There’s no per-fan rotation tick. In the three-window benchmark, the WPO scene measured **8.33 ms/frame on the game thread** and **7.69 ms/frame for GPU scene rendering**. The screenshots below show a single full window (R1). The WPO screenshot shows **8.416 ms on the game thread** and **7.270 ms for GPU scene rendering**. Each pair measures two different timers.
+There’s no per-fan rotation tick. In the three-window benchmark, the WPO scene measured **8.33 ms/frame on the game thread** and **7.69 ms/frame for GPU scene rendering**. The screenshots below show a single full window. The WPO screenshot shows **8.416 ms on the game thread** and **7.270 ms for GPU scene rendering**. Each pair measures two different timers.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View full R1 windows in Unreal Insights</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View full capture windows in Unreal Insights</summary>
 
 Read the `I.Med` column for the inclusive median in milliseconds. `FEngineLoop::Tick` measures the whole game-thread frame. `SceneRender` measures GPU scene rendering. The on/off test above uses the whole GPU frame timer for its **+0.01 ms/frame** result.
 
-**Static — `FanBench_Static_R1`**
+**Static**
 
-![UE 5.8.4 Unreal Insights, Static R1 at 8.271 ms on the game thread and 7.301 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Static.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, Static at 8.271 ms on the game thread and 7.301 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Static.png' | relative_url }})
 
-*Static R1 measured **8.271 ms** on the game thread and **7.301 ms** for GPU scene rendering.*
+*Static measured **8.271 ms** on the game thread and **7.301 ms** for GPU scene rendering.*
 
-**Material WPO — `FanBench_WPO_R1`**
+**Material WPO**
 
-![UE 5.8.4 Unreal Insights, WPO R1 at 8.416 ms on the game thread and 7.270 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-WPO.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, WPO at 8.416 ms on the game thread and 7.270 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-WPO.png' | relative_url }})
 
-*WPO R1 measured **8.416 ms** on the game thread and **7.270 ms** for GPU scene rendering.*
+*WPO measured **8.416 ms** on the game thread and **7.270 ms** for GPU scene rendering.*
 
 </details>
 
