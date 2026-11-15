@@ -72,15 +72,15 @@ I used 400 copies of the same fan so the per-fan work would add up enough to mea
 
 The game-thread column measures the whole editor frame, including the rest of the scene and any waits. The static scene with 400 fans already took **8.31 ms/frame**, and the WPO scene took **8.33 ms/frame**. The on/off test below measures what changed when I enabled WPO on the same material in the same scene.
 
-| 400 fans | Whole-frame game-thread time (ms/frame) | GPU scene rendering (ms/frame) |
-| --- | ---: | ---: |
-| Static(our baseline) | 8.31 | 7.61 |
-| Material WPO | 8.33 | 7.69 |
-| Rotating Movement Component | 13.43 <span class="rotation-tick-delta">(+5.12 ms vs static)</span> | 10.89 |
-| Blueprint Tick | 13.84 <span class="rotation-tick-delta">(+5.53 ms vs static)</span> | 10.47 |
+| 400 fans | Whole game-thread frame (ms) | CPU rotation ticks (ms/game frame) | GPU scene rendering (ms/frame) |
+| --- | ---: | ---: | ---: |
+| Static | 8.31 | — | 7.61 |
+| Material WPO | 8.33 | — | 7.69 |
+| Rotating Movement Component | 13.43 | 3.71 | 10.89 |
+| Blueprint Tick | 13.84 | 5.60 | 10.47 |
 {: .rotation-table}
 
-The Blueprint Tick and Rotating Movement Component totals differed by **0.41 ms/frame** on the game thread. Their measured rotation scopes differed by **1.89 ms/frame**. The component's game-thread window medians ranged from **11.89 to 24.57 ms/frame**, so the difference in total game-thread time is sensitive to the capture window.
+CPU rotation ticks are part of the whole game-thread frame. For example, Rotating Movement measured **13.43 ms** for the whole frame and **3.71 ms** in its rotation ticks. Static and WPO have no per-fan CPU rotation tick. The component’s whole-frame medians ranged from **11.89 to 24.57 ms** across the three windows.
 
 **WPO on vs. off in the same map.** Enabling WPO raised the GPU `ShadowDepths` timer by about **0.15 ms/frame** across four paired windows. The paired median change in total GPU frame time was **+0.01 ms/frame**.
 
@@ -107,7 +107,7 @@ Across the three trimmed windows, the Blueprint actor ticks for 400 fans took a 
 
 ### Rotating Movement Component timings
 
-The component runs in C++, and it still has to update the transform each frame. Across the three trimmed windows, the 400 movement ticks took a median **3.71 ms per game frame**. The whole game thread measured **13.43 ms/frame** with the component and **13.84 ms/frame** with Blueprint Tick.
+The component runs in C++ and updates the transform each frame. The screenshot below shows the movement ticks summed per game frame for one full capture window.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
