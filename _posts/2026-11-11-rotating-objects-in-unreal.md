@@ -72,11 +72,11 @@ I used 400 copies of the same fan so the per-fan work would add up enough to mea
 
 The game-thread column measures the whole editor frame, including the rest of the scene and any waits. The static scene with 400 fans already took **8.31 ms/frame**, and the WPO scene took **8.33 ms/frame**. The WPO on/off test below is a better estimate of the rotation’s added GPU cost.
 
-| 400 fans | Whole-frame game-thread time (ms) | GPU scene render (ms/frame) |
+| 400 fans | Whole-frame game-thread time (ms/frame) | GPU scene rendering (ms/frame) |
 | --- | ---: | ---: |
 | Static(our baseline) | 8.31 | 7.61 |
 | Material WPO | 8.33 | 7.69 |
-| Rotating Movement Component | 13.43 <span class="rotation-tick-delta">(+5.13 ms vs static)</span> | 10.89 |
+| Rotating Movement Component | 13.43 <span class="rotation-tick-delta">(+5.12 ms vs static)</span> | 10.89 |
 | Blueprint Tick | 13.84 <span class="rotation-tick-delta">(+5.53 ms vs static)</span> | 10.47 |
 {: .rotation-table}
 
@@ -87,44 +87,45 @@ The Blueprint Tick and Rotating Movement Component totals differed by **0.41 ms/
 <details class="fan-trace" markdown="1">
 <summary>How I tested</summary>
 
-I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. The table reports the median of three 3-second window medians per method, with 100 ms trimmed at each end. I ran the captures in a separate editor process while the working editor stayed open. Static and WPO used different materials. The transform-driven levels used movable meshes. The WPO material used world-space normals and a 900 cm displacement override.
+I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation. Each level had a 20×20 grid of the same Nanite mesh, a floor, an overhead directional light, and a fixed camera. The table and rotation-tick summaries report the median of three 3-second window medians per method, with 100 ms trimmed at each end. Each screenshot shows one full, untrimmed window. I ran the captures in a separate editor process while the working editor stayed open. Static and WPO used different materials. The transform-driven levels used movable meshes. The WPO material used world-space normals and a 900 cm displacement override.
 
 
 </details>
 
 ### Blueprint Tick timings
 
-With 400 fans, the Blueprint actor ticks took a median **5.60 ms per game frame**, including the transform updates.
+Across the three trimmed windows, the Blueprint actor ticks for 400 fans took a median **5.60 ms per game frame**, including the transform updates.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
 ![UE 5.8.4 Unreal Insights, Blueprint Tick R2 at 5.577 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-BP.png' | relative_url }})
 
-*The Blueprint actor tick had a median inclusive cost of 5.577 ms per game frame.*
+*Full R2 window. The Blueprint actor tick measured **5.577 ms per game frame** in `I.Med`.*
 
 </details>
 
 ### Rotating Movement Component timings
 
-The component runs in C++, and it still has to update the transform each frame. The 400 movement ticks took a median **3.71 ms per game frame**. The whole game thread measured **13.43 ms/frame** with the component and **13.84 ms/frame** with Blueprint Tick.
+The component runs in C++, and it still has to update the transform each frame. Across the three trimmed windows, the 400 movement ticks took a median **3.71 ms per game frame**. The whole game thread measured **13.43 ms/frame** with the component and **13.84 ms/frame** with Blueprint Tick.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
 ![UE 5.8.4 Unreal Insights, Rotating Movement R2 at 3.700 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Component.png' | relative_url }})
 
+*Full R2 window. Rotating Movement measured **3.700 ms per game frame** in `I.Med`.*
 
 </details>
 
 ### Material WPO timings
 
-There’s no per-fan rotation tick. Across the three trimmed windows summarized in the table, GPU scene rendering measured **7.69 ms/frame** for WPO and **7.61 ms/frame** for static. In the full R1 windows shown below, the order reversed, with **7.270 ms/frame** for WPO and **7.301 ms/frame** for static.
+There’s no per-fan rotation tick. In the three-window benchmark, the WPO scene measured **8.33 ms/frame on the game thread** and **7.69 ms/frame for GPU scene rendering**. The screenshots below show a single full window (R1). The WPO screenshot shows **8.416 ms on the game thread** and **7.270 ms for GPU scene rendering**. Each pair measures two different timers.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View full R1 windows in Unreal Insights</summary>
 
-Read the `I.Med` column for the inclusive median in milliseconds. `FEngineLoop::Tick` is the game-thread measurement and `SceneRender` is the GPU scene-render measurement.
+Read the `I.Med` column for the inclusive median in milliseconds. `FEngineLoop::Tick` measures the whole game-thread frame. `SceneRender` measures GPU scene rendering. The on/off test above uses the whole GPU frame timer for its **+0.01 ms/frame** result.
 
 **Static — `FanBench_Static_R1`**
 
