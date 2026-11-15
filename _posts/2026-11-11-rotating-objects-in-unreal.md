@@ -119,20 +119,24 @@ The component runs in C++, and it still has to update the transform each frame. 
 
 ### Material WPO timings
 
-There’s no per-fan rotation tick. In this test, the WPO scene measured **7.69 ms/frame** of GPU scene rendering, compared with **7.61 ms/frame** for the static scene.
+There’s no per-fan rotation tick. Across the three trimmed windows summarized in the table, GPU scene rendering measured **7.69 ms/frame** for WPO and **7.61 ms/frame** for static. In the full R1 windows shown below, the order reversed, with **7.270 ms/frame** for WPO and **7.301 ms/frame** for static.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View full R1 windows in Unreal Insights</summary>
+
+Read the `I.Med` column for the inclusive median in milliseconds. `FEngineLoop::Tick` is the game-thread measurement and `SceneRender` is the GPU scene-render measurement.
 
 **Static — `FanBench_Static_R1`**
 
 ![UE 5.8.4 Unreal Insights, Static R1 at 8.271 ms on the game thread and 7.301 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Static.png' | relative_url }})
 
+*Static R1 measured **8.271 ms** on the game thread and **7.301 ms** for GPU scene rendering.*
+
 **Material WPO — `FanBench_WPO_R1`**
 
 ![UE 5.8.4 Unreal Insights, WPO R1 at 8.416 ms on the game thread and 7.270 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-WPO.png' | relative_url }})
 
-*Read `I.Med` for median milliseconds. Static R1 measured 8.271 ms on the game thread and 7.301 ms for GPU scene rendering. WPO R1 measured 8.416 ms and 7.270 ms, respectively. These screenshots show the full R1 windows. The table summarizes three trimmed windows.*
+*WPO R1 measured **8.416 ms** on the game thread and **7.270 ms** for GPU scene rendering.*
 
 </details>
 
