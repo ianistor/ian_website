@@ -33,7 +33,7 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 
 ## Blueprint Tick {#blueprint-tick}
 
-**Use case: ** when the blade collision accuracy matters or where i want to update the behavior in realtime based on hit/damage/quest logic.
+**Use case:** when the blade collision accuracy matters or where i want to update the behavior in realtime based on hit/damage/quest logic.
 
 **Setup.** Connect **Event Tick** to **Add Actor Local Rotation**. The graph below turns one degree per tick. For a steady speed, multiply degrees per second by **Delta Seconds** instead. If the housing stays still, rotate a separate blade component with its pivot at the hub.
 
