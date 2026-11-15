@@ -3,8 +3,8 @@ layout: post
 title: "Three Ways to Spin a Fan in Unreal Engine"
 date: 2026-11-11
 tags: [unreal, workflow]
-image: "/assets/images/blog/rotating-objects-in-unreal/fan-collision-and-visual.jpg"
-thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4"
+image: "/assets/images/blog/rotating-objects-in-unreal/thumbnail_blogPost.png"
+thumbnail_video: "/assets/videos/blog/rotating-objects-in-unreal/visual_rotation.mp4"
 excerpt: "Blueprint Tick, Rotating Movement Component, and World Position Offset compared"
 ---
 
@@ -20,7 +20,7 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 }
 </style>
 
-{% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/rotation_visual.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/rotation_col.mp4" autoplay=true %}
+{% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/visual_rotation.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/collision_rotation.mp4" autoplay=true %}
 
 
 *Drag the divider to see whether collision follows the visible blades.*
