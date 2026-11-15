@@ -23,7 +23,7 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 {% include video-compare.html visual="/assets/videos/blog/rotating-objects-in-unreal/visual_rotation.mp4" collision="/assets/videos/blog/rotating-objects-in-unreal/collision_rotation.mp4" autoplay=true %}
 
 
-*Drag the divider to see whether collision follows the visible blades.*
+*Drag the slider on the video to swtich between Collision view and Lit view*
 
 ## Which method should I use?
 
