@@ -27,7 +27,7 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 
 ## Which method should I use?
 
-- **[Blueprint Tick](#blueprint-tick)** when gameplay needs direct control over the blade.
+- **[Blueprint Tick](#blueprint-tick)** when you need realtime control over the rotation and/or collision to be updated.
 - **[Rotating Movement Component](#rotating-movement-component)** for continuous spin when gameplay mainly changes the speed and axis.
 - **[World Position Offset (WPO)](#material-world-position-offset)** for decorative fans where accurate blade collision matters little. Around 10–20 visual-only fans is where I'd start profiling WPO against transform rotation. The benchmark below uses 400.
 
@@ -59,13 +59,12 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 
 ## Blueprint Tick {#blueprint-tick}
 
-**When I’d use it.** When the blade angle matters to gameplay.
+**When I’d use it.** When the blade collision accuracy matters or where i want to update the behavior in realtime based on hit/damage/quest logic.
 
 **Setup.** Connect **Event Tick** to **Add Actor Local Rotation**. The graph below turns one degree per tick. For a steady speed, multiply degrees per second by **Delta Seconds** instead. If the housing stays still, rotate a separate blade component with its pivot at the hub.
 
 ![Blueprint Tick connected to Add Actor Local Rotation]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_tick.png' | relative_url }})
 
-*The example applies one degree each time Event Tick runs.*
 
 **Collision.** It follows the transform when enabled. For a fast trap, check whether the blade skips contacts between frames.
 
@@ -76,21 +75,19 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 
 ![UE 5.8.4 Unreal Insights, Blueprint Tick R2 at 5.577 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-BP.png' | relative_url }})
 
-*Full R2 window. The Blueprint actor tick had a median inclusive cost of 5.577 ms per game frame.*
+*The Blueprint actor tick had a median inclusive cost of 5.577 ms per game frame.*
 
 </details>
 
 ## Rotating Movement Component {#rotating-movement-component}
 
-**When I’d use it.** When the fan keeps spinning and gameplay changes the speed.
+**When I’d use it.** When the fan keeps spinning and maybe when gameplay needs to changes the speed or simple on/off
 
 **Setup.** Add a **Rotating Movement Component**, enable **Rotation in Local Space**, and set **Rotation Rate** around the shaft axis. Use **Set Updated Component** if the blades have their own component. A Timeline can wind the fan down when the power goes out.
 
 ![Rotating Movement Component with local-space rotation enabled]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_component.png' | relative_url }})
 
-*Rotation Rate is set on the local shaft axis.*
-
-**Collision.** It follows the updated component. The rotation step doesn’t sweep for hits.
+**Collision.** It follows the updated component.
 
 **Cost.** The component runs in C++, and it still has to update the transform each frame. The 400 movement ticks took a median **3.71 ms per game frame**. The whole game thread measured **13.43 ms/frame** with the component and **13.84 ms/frame** with Blueprint Tick.
 
@@ -99,21 +96,18 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 
 ![UE 5.8.4 Unreal Insights, Rotating Movement R2 at 3.700 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Component.png' | relative_url }})
 
-*Full R2 window. Rotating Movement had a median inclusive cost of 3.700 ms per game frame.*
 
 </details>
 
 ## Material World Position Offset {#material-world-position-offset}
 
-**When I’d use it.** For decorative fans that can spin visually.
+**When I’d use it.** For decorative fans that can spin visually or when I can get away with non accurate collision hits.
 
 **Setup.** Feed the normalized world-space shaft axis and the hub pivot into **RotateAboutAxis**. Drive the angle with **Time × Speed** and plug the result into **World Position Offset (WPO)**. WPO rotates the vertices only, so rotate the normals by the same axis and angle to keep lighting aligned with the blades. Connect the world-space normal output to **Normal** and disable **Tangent Space Normal** on the material.
 
 <div class="callout tip"><p><strong>Hint</strong> If the cast shadow clips on Nanite, increase <strong>Max World Position Offset Displacement</strong> in the material or instance enough to cover the full rotation.</p></div>
 
 ![Material graph using RotateAboutAxis to drive World Position Offset]({{ '/assets/images/blog/rotating-objects-in-unreal/wpo_mat_function.png' | relative_url }})
-
-*RotateAboutAxis calculates the displacement that feeds World Position Offset.*
 
 **Collision.** It stays at the original pose while the rendered blades spin.
 
