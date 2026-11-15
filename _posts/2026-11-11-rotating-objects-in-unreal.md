@@ -109,7 +109,7 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 
 **Setup.** Feed the normalized world-space shaft axis and the hub pivot into **RotateAboutAxis**. Drive the angle with **Time × Speed** and plug the result into **World Position Offset (WPO)**. If the highlights look wrong as the blades turn, check the shading normals.
 
-![Material graph using RotateAboutAxis to drive World Position Offset]({{ '/assets/images/blog/rotating-objects-in-unreal/rotation_wpo.png' | relative_url }})
+![Material graph using RotateAboutAxis to drive World Position Offset]({{ '/assets/images/blog/rotating-objects-in-unreal/wpo_mat_function.png' | relative_url }})
 
 *RotateAboutAxis calculates the displacement that feeds World Position Offset.*
 
