@@ -107,7 +107,9 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 
 **When I’d use it.** For decorative fans that can spin visually.
 
-**Setup.** Feed the normalized world-space shaft axis and the hub pivot into **RotateAboutAxis**. Drive the angle with **Time × Speed** and plug the result into **World Position Offset (WPO)**. If the highlights look wrong as the blades turn, check the shading normals.
+**Setup.** Feed the normalized world-space shaft axis and the hub pivot into **RotateAboutAxis**. Drive the angle with **Time × Speed** and plug the result into **World Position Offset (WPO)**. WPO rotates the vertices only, so rotate the normals by the same axis and angle to keep lighting aligned with the blades. Connect the world-space normal output to **Normal** and disable **Tangent Space Normal** on the material.
+
+If the cast shadow clips on Nanite, increase **Max World Position Offset Displacement** in the material or instance enough to cover the full rotation.
 
 ![Material graph using RotateAboutAxis to drive World Position Offset]({{ '/assets/images/blog/rotating-objects-in-unreal/wpo_mat_function.png' | relative_url }})
 
