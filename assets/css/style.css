@@ -225,11 +225,12 @@ a:hover {
 
 .page-shell {
   height: 100vh;
+  height: 100dvh;
+  padding-top: var(--header-zone-height);
 }
 
 .page-scroll {
-  height: calc(100vh - var(--header-zone-height));
-  margin-top: var(--header-zone-height);
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   padding-top: var(--header-gap);
