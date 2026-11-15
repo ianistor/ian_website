@@ -70,7 +70,7 @@ For another use of WPO, see [how I bake deformation into vertex colors in Houdin
 
 I used 400 copies of the same fan so the per-fan work would add up enough to measure. With a single fan, small differences between rotation methods can get lost in normal frame-to-frame variation.
 
-The game-thread column measures the whole editor frame, including the rest of the scene and any waits. The static scene with 400 fans already took **8.31 ms/frame**, and the WPO scene took **8.33 ms/frame**. The WPO on/off test below is a better estimate of the rotation’s added GPU cost.
+The game-thread column measures the whole editor frame, including the rest of the scene and any waits. The static scene with 400 fans already took **8.31 ms/frame**, and the WPO scene took **8.33 ms/frame**. The on/off test below measures what changed when I enabled WPO on the same material in the same scene.
 
 | 400 fans | Whole-frame game-thread time (ms/frame) | GPU scene rendering (ms/frame) |
 | --- | ---: | ---: |
@@ -120,7 +120,15 @@ The component runs in C++, and it still has to update the transform each frame. 
 
 ### Material WPO timings
 
-There’s no per-fan rotation tick. In the three-window benchmark, the WPO scene measured **8.33 ms/frame on the game thread** and **7.69 ms/frame for GPU scene rendering**. The screenshots below show a single full window. The WPO screenshot shows **8.416 ms on the game thread** and **7.270 ms for GPU scene rendering**. Each pair measures two different timers.
+WPO has no per-fan rotation tick. The GPU scene-render timings varied across the three windows.
+
+| GPU scene rendering (ms/frame) | First window | Second window | Third window | Benchmark table |
+| --- | ---: | ---: | ---: | ---: |
+| Static | 7.327 | 7.614 | 7.672 | **7.61** |
+| Material WPO | 7.311 | 7.690 | 7.695 | **7.69** |
+{: .rotation-table}
+
+The screenshots show the first window before trimming. WPO’s GPU scene-render time was slightly lower in that window and slightly higher in the other two. The difference between the table medians is smaller than the spread across windows for either setup. In the separate on/off test, the shadow pass took about **0.15 ms/frame** more with WPO enabled, while the whole GPU frame changed by **+0.01 ms/frame**.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View full capture windows in Unreal Insights</summary>
