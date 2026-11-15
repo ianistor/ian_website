@@ -34,9 +34,9 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 ## What 400 fans cost
 
 For 1 fan either of these solutions work and probably you won't feel a dent in your performance, however when we add more the difference in costs is easier to be seen. So thats why i took 400 fans and profiled them.
-WPO and static measured **8.33** and **8.31 ms/frame** on the game thread, respectively.
+The game-thread column measures the whole editor frame, including the rest of the scene and any waits. The static scene with 400 fans already took **8.31 ms/frame**, and the WPO scene took **8.33 ms/frame**. The WPO on/off test below is a better estimate of the rotation’s added GPU cost.
 
-| 400 fans | Game thread (ms/frame) | GPU scene render (ms/frame) |
+| 400 fans | Whole-frame game-thread time (ms) | GPU scene render (ms/frame) |
 | --- | ---: | ---: |
 | Static(our baseline) | 8.31 | 7.61 |
 | Material WPO | 8.33 | 7.69 |
