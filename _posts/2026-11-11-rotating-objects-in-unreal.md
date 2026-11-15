@@ -31,9 +31,10 @@ Going over ways to spin objects in Unreal, their pros and cons and some profilin
 - **[Rotating Movement Component](#rotating-movement-component)** for continuous spin when gameplay mainly changes the speed and axis.
 - **[World Position Offset (WPO)](#material-world-position-offset)** for decorative fans where accurate blade collision matters little. Around 10–20 visual-only fans is where I'd start profiling WPO against transform rotation. The benchmark below uses 400.
 
-## What 400 fans cost
+## Performance benchmark
 
-For 1 fan either of these solutions work and probably you won't feel a dent in your performance, however when we add more the difference in costs is easier to be seen. So thats why i took 400 fans and profiled them.
+I used 400 copies of the same fan so the per-fan work would add up enough to measure. With a single fan, small differences between rotation methods can get lost in normal frame-to-frame variation.
+
 The game-thread column measures the whole editor frame, including the rest of the scene and any waits. The static scene with 400 fans already took **8.31 ms/frame**, and the WPO scene took **8.33 ms/frame**. The WPO on/off test below is a better estimate of the rotation’s added GPU cost.
 
 | 400 fans | Whole-frame game-thread time (ms) | GPU scene render (ms/frame) |
