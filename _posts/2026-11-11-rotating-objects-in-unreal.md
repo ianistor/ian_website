@@ -120,15 +120,7 @@ The component runs in C++, and it still has to update the transform each frame. 
 
 ### Material WPO timings
 
-WPO has no per-fan rotation tick. The GPU scene-render timings varied across the three windows.
-
-| GPU scene rendering (ms/frame) | First window | Second window | Third window | Benchmark table |
-| --- | ---: | ---: | ---: | ---: |
-| Static | 7.327 | 7.614 | 7.672 | **7.61** |
-| Material WPO | 7.311 | 7.690 | 7.695 | **7.69** |
-{: .rotation-table}
-
-The screenshots show the first window before trimming. WPO’s GPU scene-render time was slightly lower in that window and slightly higher in the other two. The difference between the table medians is smaller than the spread across windows for either setup. In the separate on/off test, the shadow pass took about **0.15 ms/frame** more with WPO enabled, while the whole GPU frame changed by **+0.01 ms/frame**.
+WPO has no per-fan rotation tick. Across all 1,005 measured GPU frames per setup, scene rendering averaged **7.55 ms/frame** for both Static and WPO. The main table uses the median of the three trimmed window medians. The screenshots show one full capture window. The on/off test above measures the change in shadow rendering and whole-GPU-frame time when WPO is toggled on the same scene and material.
 
 <details class="fan-trace" markdown="1">
 <summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View full capture windows in Unreal Insights</summary>
