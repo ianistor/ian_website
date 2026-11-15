@@ -71,9 +71,11 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 **Cost.** With 400 fans, the Blueprint actor ticks took a median **5.60 ms per game frame**, including the transform updates.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View the original UE 5.7.3 trace screenshot</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
-![Insights Game Frame mode showing a 5.24 ms inclusive median for the Blueprint actor tick]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Blueprint-Game-Frame.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, Blueprint Tick R2 at 5.577 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-BP.png' | relative_url }})
+
+*Full R2 window. The Blueprint actor tick had a median inclusive cost of 5.577 ms per game frame.*
 
 </details>
 
@@ -92,9 +94,11 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 **Cost.** The component runs in C++, and it still has to update the transform each frame. The 400 movement ticks took a median **3.71 ms per game frame**. The whole game thread measured **13.43 ms/frame** with the component and **13.84 ms/frame** with Blueprint Tick.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View the original UE 5.7.3 trace screenshot</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
-![Insights Game Frame mode showing a 3.24 ms inclusive median for RotatingMovement]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-Component-Matched-Game-Frame.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, Rotating Movement R2 at 3.700 ms per game frame]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Component.png' | relative_url }})
+
+*Full R2 window. Rotating Movement had a median inclusive cost of 3.700 ms per game frame.*
 
 </details>
 
@@ -113,17 +117,17 @@ I used **Unreal Engine 5.8.4** on an **RTX 3080** in realtime editor simulation.
 **Cost.** There’s no per-fan rotation tick. In this test, the WPO scene measured **7.69 ms/frame** of GPU scene rendering, compared with **7.61 ms/frame** for the static scene.
 
 <details class="fan-trace" markdown="1">
-<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View the original UE 5.7.3 trace screenshot</summary>
+<summary><span class="fan-trace-icon" aria-hidden="true">&#x1F50D;</span>View Unreal Insights trace</summary>
 
 **Static — `FanBench_Static_R1`**
 
-![Unreal Insights showing 8.30 ms game thread and 6.32 ms GPU scene render for Static]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-static-R1.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, Static R1 at 8.271 ms on the game thread and 7.301 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-Static.png' | relative_url }})
 
 **Material WPO — `FanBench_WPO_R1`**
 
-![Unreal Insights showing 8.42 ms game thread and 6.40 ms GPU scene render for WPO]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-wpo-R1.png' | relative_url }})
+![UE 5.8.4 Unreal Insights, WPO R1 at 8.416 ms on the game thread and 7.270 ms for GPU scene rendering]({{ '/assets/images/blog/rotating-objects-in-unreal/Insights-UE584-WPO.png' | relative_url }})
 
-*Read `I.Med` for median milliseconds in these UE 5.7.3 screenshots. Each screenshot shows its full R1 window.*
+*Read `I.Med` for median milliseconds. Static R1 measured 8.271 ms on the game thread and 7.301 ms for GPU scene rendering. WPO R1 measured 8.416 ms and 7.270 ms, respectively. These screenshots show the full R1 windows. The table summarizes three trimmed windows.*
 
 </details>
 
