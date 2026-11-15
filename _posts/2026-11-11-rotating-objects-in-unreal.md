@@ -46,6 +46,8 @@ In this editor test, WPO’s game-thread time was close to static. Rotating Move
 
 The game-thread totals for Blueprint Tick and Rotating Movement Component differ by **2.15 ms/frame**. The red **+2.00 ms** compares only the measured rotation ticks.
 
+**Updated WPO trace (UE 5.8.4).** I reran the 400-fan WPO level on the RTX 3080 after updating the material to rotate its world-space normals. Across three 3-second windows, the median of the window medians was **8.75 ms/frame** on the game thread and **7.75 ms/frame** for GPU scene rendering. The window medians ranged from 8.35 to 9.85 ms and 7.56 to 8.80 ms, respectively. This run used a separate editor process while the working editor remained open. The table uses UE 5.7.3, so these timings can't isolate the cost of the material edit.
+
 **WPO on vs. off in the same map.** Enabling WPO increased Virtual Shadow Map rendering by about **0.11 ms/frame**. The whole-scene GPU difference varied more across runs.
 
 <details class="fan-trace" markdown="1">
